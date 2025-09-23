@@ -1,0 +1,17 @@
+{
+  "name": "stock-status",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^4.19.2",
+    "jstat": "^1.9.6",
+    "mssql": "^11.0.1",
+    "xlsx": "^0.18.5"
+  }
+}

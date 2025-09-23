@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stock Status</title>
+  <!-- TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-white">
+  <!-- Top Bar -->
+  <header class="w-full h-16 bg-stone-900 flex items-center justify-between px-4">
+    <img src="img/TangnamLogo.png" alt="Logo" class="h-11" />
+    <div class="text-stone-400 text-xl font-bold">Name</div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="mx-auto max-w-[1512px] px-4">
+    <!-- Title -->
+    <div class="mt-8">
+      <h1 class="text-3xl font-bold text-black">STOCK STATUS</h1>
+    </div>
+
+    <!-- Header labels row (mirroring figma captions) -->
+    <div class="mt-2 flex items-center gap-8 text-xs text-black">
+      <a href="stock-status.html"><span class="font-bold">STOCK STATUS</span></a>
+      <a href="lead-time-supplier.html"><span>SUPPLIER</span> </a>
+      <span>ITEM</span>
+      <span>ADD New Item</span>
+    </div>
+
+
+    <!-- Filters / Search Bar -->
+    <section class="mt-6">
+      <div class="border border-black h-14 w-full flex items-center px-3">
+        <span class="text-base mr-4">Filters</span>
+        <div class="ml-auto w-56 h-9 rounded border border-zinc-400 flex items-center px-2">
+          <input id="searchInput" type="text" class="w-full h-full outline-none text-xs placeholder:text-stone-900/60"
+            placeholder="Search by Keyword....." />
+        </div>
+      </div>
+    </section> 
+
+         <!-- Table -->
+    <section class="mt-6 overflow-x-auto">
+      <table class="min-w-full border border-stone-300 text-sm text-left">
+          <thead class="bg-stone-100 text-stone-700">
+            <tr>
+              <th class="px-3 py-2 border">Branch Code</th>
+              <th class="px-3 py-2 border">SKU Number</th>
+              <th class="px-3 py-2 border">Product Name</th>
+              <th class="px-3 py-2 border">Average Demand</th>
+              <th class="px-3 py-2 border">Safety Stock</th>
+              <th class="px-3 py-2 border">Reorder Point</th>
+              <th class="px-3 py-2 border">Min</th>
+              <th class="px-3 py-2 border">OnHand-QTY</th>
+              <th class="px-3 py-2 border">Backlog</th>
+              <th class="px-3 py-2 border">TurnOver</th>
+              <th class="px-3 py-2 border">Status</th>
+            </tr>
+          </thead>
+        <tbody id="tableBody">
+          <!-- เติมด้วย JS -->
+        </tbody>
+      </table>
+    </section>
+
+
+ <script>
+  const tableBody  = document.getElementById("tableBody");
+  const searchInput = document.getElementById("searchInput");
+  const statusText = document.getElementById("statusText");
+
+  let fullRows = [];
+  let filtered = [];
+
+  async function loadStockStatus() {
+    try {
+      // ตัวอย่าง: ดึง 12 เดือนล่าสุด (เปลี่ยนเป็น 3 หรือ 6 ได้ด้วยพารามิเตอร์)
+      const res = await fetch(`/api/stock-status?months=6&ts=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      fullRows = Array.isArray(data.rows) ? data.rows : [];
+      filtered = fullRows;
+      render();
+    } catch (err) {
+      console.error("Failed to load /api/stock-status", err);
+      if (tableBody) {
+        tableBody.innerHTML = `
+          <tr><td colspan="11" class="px-3 py-2 border text-red-600">
+            ไม่สามารถโหลดข้อมูลได้ (ตรวจสอบว่า server ทำงานและเชื่อม DB ได้)
+          </td></tr>`;
+      }
+      if (statusText) statusText.textContent = "Error loading data";
+    }
+  }
+
+  function render() {
+    if (!tableBody) return;
+    tableBody.innerHTML = "";
+
+    if (!filtered || filtered.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="11" class="px-3 py-2 border text-stone-500">No data</td></tr>`;
+      if (statusText) statusText.textContent = "Showing 0";
+      return;
+    }
+
+    for (const r of filtered) {
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-stone-50";
+      tr.innerHTML = `
+        <td class="px-3 py-2 border">${r.branchCode ?? ""}</td>
+        <td class="px-3 py-2 border">${r.skuNumber ?? ""}</td>
+        <td class="px-3 py-2 border">${r.productName ?? ""}</td>
+        <td class="px-3 py-2 border text-right">${r.averageDemand ?? 0}</td>
+        <td class="px-3 py-2 border text-right">${r.safetyStock ?? ""}</td>
+        <td class="px-3 py-2 border text-right">${r.reorderPoint ?? ""}</td>
+        <td class="px-3 py-2 border text-right">${r.minQty ?? ""}</td>
+        <td class="px-3 py-2 border text-right">${r.onHandQty ?? ""}</td>
+        <td class="px-3 py-2 border text-right">${r.backlog ?? 0}</td>
+        <td class="px-3 py-2 border text-right">${r.turnOver ?? ""}</td>
+        <td class="px-3 py-2 border">${r.status ?? ""}</td>
+      `;
+      tableBody.appendChild(tr);
+    }
+    if (statusText) statusText.textContent = `Showing ${filtered.length}`;
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      filtered = fullRows.filter(r =>
+        (r.branchCode || "").toLowerCase().includes(q) ||
+        (r.skuNumber || "").toLowerCase().includes(q) ||
+        (r.productName || "").toLowerCase().includes(q)
+      );
+      render();
+    });
+  }
+
+  loadStockStatus();
+</script>
+
+
+
+
+    <!-- Footer Pagination / Status -->
+    <footer class="mt-24">
+      <div class="border border-black h-14 w-full flex items-center px-3 relative">
+        <!-- Left pagination -->
+        <div class="flex items-center gap-2">
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Previous</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">1</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">2</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">3</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">4</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">5</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">...</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">10</button>
+          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Next</button>
+        </div>
+
+        <!-- Right side status and GO box -->
+        <div class="ml-auto flex items-center gap-2">
+          <div class="rounded border border-stone-300 h-7 w-16"></div>
+          <div class="bg-zinc-300 rounded h-7 w-8 grid place-items-center">
+            <span class="text-black text-xs">GO</span>
+          </div>
+          <!-- <div class="text-center text-black text-xs">Showing 1 of 100</div> -->
+          <div class="text-center text-black text-xs">
+        <span id="statusText">Loading…</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+
+</html>
