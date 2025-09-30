@@ -30,7 +30,8 @@ export function determineStatus(p) {
 
   // ไม่ต้องสั่งซื้อ
   const noOrder =
-    ((!isNewItem && frequency6 <= 1 && salesLast1 <= 0) || // ใช้ <= 0     !inItemGroup ||
+    ((!isNewItem && frequency6 <= 1 && salesLast1 <= 0) || // ใช้ <= 0     
+    inItemGroup ||
      (avg == 0 && onHand == 0));
 
   if (noOrder) return "ไม่ต้องสั่งซื้อ";

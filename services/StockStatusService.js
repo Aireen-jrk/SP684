@@ -29,7 +29,6 @@ export class StockStatusService {
         const branch = String(opts.branch || "").trim();
 
         // ===== คอลัมน์เดือน =====
-        // ===== คอลัมน์เดือน =====
         const colsAvg = this.window.pick(months, excludeCurrent); // N เดือนล่าสุดสำหรับ "เฉลี่ย"
         const colsStdev6 = this.window.pick(6, true);                // 6 เดือนล่าสุด (ตัดเดือนปัจจุบัน) สำหรับ STDEV & Frequency
 
@@ -43,11 +42,12 @@ export class StockStatusService {
         const sumExpr = this.window.buildSumExpr(colsAvg);
         const cntExpr = String(colsAvg.length); // เฉลี่ยด้วยจำนวนเดือนที่เลือกเสมอ
 
-        // ===== STDEV (6 เดือน, Population) =====
+        // ===== STDEV (6 เดือน) =====
         const valuesStdev6 = colsStdev6
             .map(c => `(CAST(ISNULL(t.[${c}],0) AS FLOAT))`)
             .join(",");
-        const stdevExpr = `(SELECT STDEVP(x) FROM (VALUES ${valuesStdev6}) AS _m(x))`;
+        const stdevExpr = `(SELECT STDEV(x) FROM (VALUES ${valuesStdev6}) AS _m(x))`; //ตามexcel
+        // const stdevExpr = `(SELECT STDEVP(x) FROM (VALUES ${valuesStdev6}) AS _m(x))`; //แบบ Population
 
         // ===== Frequency (6 เดือน) =====
         const freqExpr = colsStdev6
@@ -91,9 +91,9 @@ export class StockStatusService {
       (${freqExpr}) AS frequency6
         FROM dbo.TestAll AS t
         ${where}
-        ORDER BY t.Branch_Code, t.Item_Code;
+       
     `;
-
+ // ORDER BY t.Branch_Code, t.Item_Code;
         const pool = await getPool();
         const request = pool.request();
         if (branch && pool.sql?.VarChar) request.input("branch", pool.sql.VarChar(32), branch);
@@ -114,9 +114,9 @@ export class StockStatusService {
 
             // 1) Z ปัดทศนิยม 2 ตำแหน่ง
             const zRaw = jstatPkg.jStat.normal.inv(serviceLevel, 0, 1);
-            const z = Math.round(zRaw * 100) / 100
+            const z    = Math.round(zRaw * 100) / 100;
 
-            // 2) STDEV₆ ปัดเป็นจำนวนเต็ม
+            // 2) STDEV₆ 
             const stdevRaw = Number(r.stdev6 ?? 0);
             const stdevInt = Math.round(stdevRaw);
 
@@ -129,15 +129,15 @@ export class StockStatusService {
             const reorderPoint = Math.round(Math.max(0, avg * sumLT));
             const minQty = Math.max(0, safetyStock + reorderPoint);
 
-            const onHandQty = Math.trunc(Number(r.onHandQty ?? 0)); // ตัดเป็น int
-            const backlog = Math.trunc(Number(r.backlog ?? 0)); // ตัดเป็น int
+            const onHandQty = Math.round(Number(r.onHandQty ?? 0)); // ตัดเป็น int
+            const backlog = Math.round(Number(r.backlog ?? 0)); // ตัดเป็น int
             const turnOver = avg > 0 ? Number(((onHandQty + backlog) / avg).toFixed(2)) : 0;
             // แปลงค่าจากคอลัมน์จริง
             const isNewItem =
                 Number(r.New_Item) === 1 ||
                 String(r.New_Item ?? "").trim().toUpperCase() === "Y";
             const inItemGroup = String(r.Item_Group ?? "").trim() !== "";
-
+ 
             const status = determineStatus({
                 isNewItem,
                 inItemGroup,
@@ -173,6 +173,53 @@ export class StockStatusService {
                 status
             };
         });
+                // ===== Sorting =====
+        const sortKeyMap = {
+        branchCode:   'branchCode',
+        skuNumber:    'skuNumber',
+        productName:  'productName',
+        averageDemand:'averageDemand',
+        safetyStock:  'safetyStock',
+        reorderPoint: 'reorderPoint',
+        min:          'minQty',
+        minQty:       'minQty',       // เผื่อส่งชื่อแบบนี้มา
+        onhand:       'onHandQty',
+        onHandQty:    'onHandQty',
+        backorder:    'backlog',
+        backlog:      'backlog',
+        turnover:     'turnOver',
+        turnOver:     'turnOver',
+        };
+
+        const sortByParam = String(opts.sortBy || '').trim();
+        const orderParam  = String(opts.order  || 'asc').toLowerCase();
+
+        const sortKey = sortKeyMap[sortByParam] || null;
+        const sortDir = (orderParam === 'desc') ? -1 : 1;
+
+        // ตัวช่วยเปรียบเทียบ (รองรับ null/undefined และทั้ง number/string)
+        function cmp(a, b) {
+        const ax = a ?? null;
+        const bx = b ?? null;
+
+        if (ax === null && bx === null) return 0;
+        if (ax === null) return  1;  // null ไปท้าย (asc)
+        if (bx === null) return -1;
+
+        if (typeof ax === 'number' && typeof bx === 'number') {
+            if (Number.isNaN(ax) && Number.isNaN(bx)) return 0;
+            if (Number.isNaN(ax)) return 1;
+            if (Number.isNaN(bx)) return -1;
+            return ax < bx ? -1 : (ax > bx ? 1 : 0);
+        }
+
+        // string เปรียบเทียบแบบ case-insensitive
+        return String(ax).localeCompare(String(bx), undefined, { sensitivity: 'accent', numeric: true });
+        }
+
+        if (sortKey) {
+        rows.sort((r1, r2) => sortDir * cmp(r1[sortKey], r2[sortKey]));
+        }
 
         return {
             monthsUsed: months,

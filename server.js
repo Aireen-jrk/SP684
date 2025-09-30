@@ -31,14 +31,21 @@ app.get("/api/ping", (req, res) => res.json({ ok: true, now: new Date().toISOStr
 // ---- 2) Average Demand จากคอลัมน์รายเดือน ----
 app.get("/api/stock-status", async (req, res) => {
   try {
-    const { months, excludeCurrent, countMode, branch } = req.query;
-    const data = await stockService.getStockStatus({ months, excludeCurrent, countMode, branch });
+    // เพิ่ม sortBy, order เข้ามาด้วย
+    const { months, excludeCurrent, countMode, branch, sortBy, order } = req.query;
+
+    // ส่งต่อไปที่ service
+    const data = await stockService.getStockStatus({
+      months, excludeCurrent, countMode, branch, sortBy, order
+    });
+
     res.json(data);
   } catch (e) {
     console.error("/api/stock-status:", e);
     res.status(500).json({ error: e.message || "Failed" });
   }
 });
+
 
 // START
 const PORT = process.env.PORT || 3000;

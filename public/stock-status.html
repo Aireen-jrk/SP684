@@ -11,56 +11,114 @@
 
 <body class="min-h-screen bg-white">
   <!-- Top Bar -->
-  <header class="w-full h-16 bg-stone-900 flex items-center justify-between px-4">
-    <img src="img/TangnamLogo.png" alt="Logo" class="h-11" />
-    <div class="text-stone-400 text-xl font-bold">Name</div>
+  <header class="w-full h-16 bg-stone-900 flex items-center px-4">
+    <!-- ซ้าย: โลโก้ + เมนู -->
+    <div class="flex items-center gap-6">
+      <img src="img/TangnamLogo.png" alt="Logo" class="h-11" />
+      <nav class="flex items-center gap-8 text-xs text-white">
+        <a href="stock-status.html" class="font-bold">STOCK STATUS</a>
+        <a href="lead-time-supplier.html" class="">SUPPLIER</a>
+        <span>ITEM</span>
+        <span>ADD New Item</span>
+      </nav>
+    </div>
+
+    <!-- ขวาสุด: ชื่อ (เผื่อใช้ในอนาคต) -->
+    <div class="ml-auto text-stone-400 text-xl font-bold">Name</div>
   </header>
+  </style>
 
   <!-- Page Content -->
-  <main class="mx-auto max-w-[1512px] px-4">
+  <main class="mx-auto max-w-none px-4">
+  <!-- <main class="h-[calc(100vh-64px)] flex flex-col w-full px-4"> -->
+
     <!-- Title -->
     <div class="mt-8">
       <h1 class="text-3xl font-bold text-black">STOCK STATUS</h1>
     </div>
 
-    <!-- Header labels row (mirroring figma captions) -->
-    <div class="mt-2 flex items-center gap-8 text-xs text-black">
-      <a href="stock-status.html"><span class="font-bold">STOCK STATUS</span></a>
-      <a href="lead-time-supplier.html"><span>SUPPLIER</span> </a>
-      <span>ITEM</span>
-      <span>ADD New Item</span>
-    </div>
-
 
     <!-- Filters / Search Bar -->
     <section class="mt-6">
-      <div class="border border-black h-14 w-full flex items-center px-3">
-        <span class="text-base mr-4">Filters</span>
+      <div class="border border-black h-14 w-full flex items-center px-3 gap-2">
+        <span class="text-base">Filters</span>
+        <img src="img/filter.png" alt="filter" class="h-4 w-4" />
+
+        <!-- Month picker -->
+        <div class="relative">
+          <select id="monthSelect"
+            class="h-9 min-w-[160px] rounded border border-zinc-400 pl-3 pr-7 text-sm appearance-none bg-white">
+            <!-- จะเติม options ด้วย JS ให้เป็นเดือนย้อนหลังอัตโนมัติ -->
+          </select>
+          <!-- caret -->
+          <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-stone-600 text-xs">▼</span>
+        </div>
+        
+        <div id="filterChips" class="flex items-center gap-2"></div>
+
+        <!-- Search box (ขวาสุด) -->
         <div class="ml-auto w-56 h-9 rounded border border-zinc-400 flex items-center px-2">
           <input id="searchInput" type="text" class="w-full h-full outline-none text-xs placeholder:text-stone-900/60"
             placeholder="Search by Keyword....." />
         </div>
       </div>
-    </section> 
+    </section>
 
-         <!-- Table -->
-    <section class="mt-6 overflow-x-auto">
-      <table class="min-w-full border border-stone-300 text-sm text-left">
-          <thead class="bg-stone-100 text-stone-700">
-            <tr>
-              <th class="px-3 py-2 border">Branch Code</th>
-              <th class="px-3 py-2 border">SKU Number</th>
-              <th class="px-3 py-2 border">Product Name</th>
-              <th class="px-3 py-2 border">Average Demand</th>
-              <th class="px-3 py-2 border">Safety Stock</th>
-              <th class="px-3 py-2 border">Reorder Point</th>
-              <th class="px-3 py-2 border">Min</th>
-              <th class="px-3 py-2 border">OnHand-QTY</th>
-              <th class="px-3 py-2 border">Backlog</th>
-              <th class="px-3 py-2 border">TurnOver</th>
-              <th class="px-3 py-2 border">Status</th>
-            </tr>
-          </thead>
+    <!-- Table -->
+    <section class="mt-6 max-h-[58vh] overflow-auto">
+      <table class="table-fixed min-w-[100px] min-w-full border border-stone-300 text-sm text-left">
+        <thead>
+          <tr>
+            <th type="button" class="px-5 py-6 border" data-sort-key="branchCode">
+              Branch Code
+              <button type="button"  class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-5 border" data-sort-key="skuNumber">
+              SKU Number
+              <button type="button" class="filter-btn-sku icon-btn ml-1" aria-label="filter sku">
+                <img src="img/filter-small.svg" alt="" class="h-4 w-4 opacity-70 hover:opacity-100">
+              </button>            
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="productName">
+              Product Name
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="averageDemand">
+              Average Demand
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="safetyStock">
+              Safety Stock
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="reorderPoint">
+              Reorder Point
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="min">
+              Min
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="onHandQty">
+              OnHand-QTY
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="backlog">
+              BackOrder
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="turnOver">
+              TurnOver
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="status">
+              Status
+              <button type="button" class="filter-btn icon-btn ml-1" aria-label="filter status">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+          </tr>
+        </thead>
         <tbody id="tableBody">
           <!-- เติมด้วย JS -->
         </tbody>
@@ -68,112 +126,589 @@
     </section>
 
 
- <script>
-  const tableBody  = document.getElementById("tableBody");
-  const searchInput = document.getElementById("searchInput");
-  const statusText = document.getElementById("statusText");
+    <script>
+      const tableBody = document.getElementById("tableBody");
+      const searchInput = document.getElementById("searchInput");
 
-  let fullRows = [];
-  let filtered = [];
+      let fullRows = [];
+      let filtered = [];
 
-  async function loadStockStatus() {
-    try {
-      // ตัวอย่าง: ดึง 12 เดือนล่าสุด (เปลี่ยนเป็น 3 หรือ 6 ได้ด้วยพารามิเตอร์)
-      const res = await fetch(`/api/stock-status?months=6&ts=${Date.now()}`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      fullRows = Array.isArray(data.rows) ? data.rows : [];
-      filtered = fullRows;
-      render();
-    } catch (err) {
-      console.error("Failed to load /api/stock-status", err);
-      if (tableBody) {
-        tableBody.innerHTML = `
+      // === state ของการ sort ===
+      let currentSortBy = "branchCode"; // ค่าเริ่มต้น
+      let currentOrder = "asc";
+
+      // ดึงข้อมูลจาก API พร้อมส่ง sortBy/order
+      async function loadStockStatus() {
+        try {
+          const url = `/api/stock-status?months=6` +
+            `&sortBy=${encodeURIComponent(currentSortBy)}` +
+            `&order=${encodeURIComponent(currentOrder)}` +
+            `&ts=${Date.now()}`;
+          console.log("[fetch]", url);
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          fullRows = Array.isArray(data.rows) ? data.rows : [];
+          if (FilterState?.status?.size || FilterState?.skuCat?.size) {
+  applyFilters();
+} else {
+          filtered = fullRows;
+          page = 1;
+          render(); 
+        }
+          updateSortIcons(); // อัปเดตไอคอนตามทิศทางปัจจุบัน
+        } catch (err) {
+          console.error("Failed to load /api/stock-status", err);
+          if (tableBody) {
+            tableBody.innerHTML = `
           <tr><td colspan="11" class="px-3 py-2 border text-red-600">
             ไม่สามารถโหลดข้อมูลได้ (ตรวจสอบว่า server ทำงานและเชื่อม DB ได้)
           </td></tr>`;
+          }
+          const ste = document.getElementById("statusText");
+          if (ste) ste.textContent = "Error loading data";
+        }
       }
-      if (statusText) statusText.textContent = "Error loading data";
-    }
-  }
 
-  function render() {
-    if (!tableBody) return;
-    tableBody.innerHTML = "";
+      // ผูกคลิกไอคอนบนหัวคอลัมน์ (ประกาศนอก loadStockStatus)
+      function initHeaderSort() {
+        const thead = document.querySelector("thead");
+        if (!thead) return;
 
-    if (!filtered || filtered.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="11" class="px-3 py-2 border text-stone-500">No data</td></tr>`;
-      if (statusText) statusText.textContent = "Showing 0";
-      return;
-    }
+        thead.addEventListener("click", (e) => {
+          const btn = e.target.closest(".sort-btn");
+          const th  = e.target.closest("th[data-sort-key]");
+          if (!btn || !th) return; // ไม่ใช่การคลิกปุ่ม sort
 
-    for (const r of filtered) {
-      const tr = document.createElement("tr");
-      tr.className = "hover:bg-stone-50";
-      tr.innerHTML = `
+          const key = th.dataset.sortKey;
+
+          if (currentSortBy === key) {
+            currentOrder = (currentOrder === "asc") ? "desc" : "asc"; // toggle
+          } else {
+            currentSortBy = key;
+            currentOrder  = "asc"; // เริ่มที่ asc เมื่อเปลี่ยนคอลัมน์
+          }
+
+          loadStockStatus(); // โหลดใหม่ โดยส่ง sortBy/order ไป backend
+        });
+      }
+
+
+      // เปลี่ยนลูกศรบนไอคอนให้ตรงกับสถานะ
+      function updateSortIcons() {
+        document.querySelectorAll("thead th[data-sort-key] .sort-btn").forEach(btn => {
+          const th = btn.closest("th");
+          const key = th.getAttribute("data-sort-key");
+          btn.classList.toggle("active", key === currentSortBy);
+          const chev = btn.querySelector(".chev");
+          if (!chev) return;
+          chev.classList.remove("asc", "desc");
+          if (key === currentSortBy) {
+            chev.classList.add(currentOrder === "desc" ? "desc" : "asc");
+          }
+        });
+      }
+
+      function statusCell(s) {
+        const n = String(s || "").trim();
+        if (n === "สั่งซื้อ" || n === "ต้องสั่งซื้อ") {
+          return `<td class="px-3 py-2 border text-center whitespace-nowrap bg-red-500 text-white font-bold">${n}</td>`;
+        }
+        if (n === "มากเกินไป") {
+          return `<td class="px-3 py-2 border text-center whitespace-nowrap bg-yellow-300 text-black font-bold">${n}</td>`;
+        }
+        return `<td class="px-3 py-2 border text-center whitespace-nowrap">${n}</td>`;
+      }
+
+      let page = 1;
+      const pageSize = 26;
+
+      function pagedRows() {
+        const start = (page - 1) * pageSize;
+        return filtered.slice(start, start + pageSize);
+      }
+
+      function render() {
+        if (!tableBody) return;
+        tableBody.innerHTML = "";
+
+        if (!filtered || filtered.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="11" class="px-3 py-2 border text-stone-500">No data</td></tr>`;
+          const st0 = document.getElementById("statusText");
+          if (st0) st0.textContent = "Showing 0";
+          return;
+        }
+
+        const rows = pagedRows();
+        for (const r of rows) {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-stone-50";
+          tr.innerHTML = `
         <td class="px-3 py-2 border">${r.branchCode ?? ""}</td>
         <td class="px-3 py-2 border">${r.skuNumber ?? ""}</td>
-        <td class="px-3 py-2 border">${r.productName ?? ""}</td>
-        <td class="px-3 py-2 border text-right">${r.averageDemand ?? 0}</td>
-        <td class="px-3 py-2 border text-right">${r.safetyStock ?? ""}</td>
-        <td class="px-3 py-2 border text-right">${r.reorderPoint ?? ""}</td>
-        <td class="px-3 py-2 border text-right">${r.minQty ?? ""}</td>
-        <td class="px-3 py-2 border text-right">${r.onHandQty ?? ""}</td>
-        <td class="px-3 py-2 border text-right">${r.backlog ?? 0}</td>
-        <td class="px-3 py-2 border text-right">${r.turnOver ?? ""}</td>
-        <td class="px-3 py-2 border">${r.status ?? ""}</td>
+        <td class="px-3 py-2 border break-words">${r.productName ?? ""}</td>
+        <td class="px-3 py-2 border text-center">${r.averageDemand ?? 0}</td>
+        <td class="px-3 py-2 border text-center">${r.safetyStock ?? ""}</td>
+        <td class="px-3 py-2 border text-center">${r.reorderPoint ?? ""}</td>
+        <td class="px-3 py-2 border text-center">${r.minQty ?? ""}</td>
+        <td class="px-3 py-2 border text-center">${r.onHandQty ?? ""}</td>
+        <td class="px-3 py-2 border text-center">${r.backlog ?? 0}</td>
+        <td class="px-3 py-2 border text-center">${r.turnOver ?? ""}</td>
+        ${statusCell(r.status ?? "")}
       `;
-      tableBody.appendChild(tr);
+          tableBody.appendChild(tr);
+        }
+
+        const st = document.getElementById("statusText");
+        if (st) {
+          const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+          st.textContent = `Page ${page} of ${totalPages} (Showing ${rows.length} of ${filtered.length})`;
+        }
+
+        renderPager();
+        bindPagerButtons();
+      }
+
+      // ค้นหา (client)
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          const q = e.target.value.trim().toLowerCase();
+          filtered = fullRows.filter(r =>
+            (r.branchCode || "").toLowerCase().includes(q) ||
+            (r.skuNumber || "").toLowerCase().includes(q) ||
+            (r.productName || "").toLowerCase().includes(q)
+          );
+          page = 1;
+          render();
+        });
+      }
+
+      // ผูก sort และโหลดครั้งแรกเมื่อ DOM พร้อม
+      document.addEventListener("DOMContentLoaded", () => {
+        initHeaderSort();
+        loadStockStatus();
+      });
+    </script>
+
+
+    <script>
+      // ต้องมีตัวแปรพวกนี้อยู่แล้ว: page (เลขหน้าเริ่มที่ 1), pageSize (=15), filtered (อาร์เรย์ข้อมูล), render()
+
+      function renderPager() {
+        const container = document.getElementById("pageButtons");
+        if (!container) return;
+        container.innerHTML = "";
+
+        const tp = Math.max(1, Math.ceil((filtered?.length || 0) / pageSize));
+
+        // แสดงหน้ารอบ ๆ ปัจจุบัน (window 5 ปุ่ม)
+        const windowSize = 5;
+        let start = Math.max(1, page - Math.floor(windowSize / 2));
+        let end = Math.min(tp, start + windowSize - 1);
+        if (end - start + 1 < windowSize) start = Math.max(1, end - windowSize + 1);
+
+        if (start > 1) container.appendChild(makePageBtn(1));
+        if (start > 2) container.appendChild(makeDots());
+
+        for (let p = start; p <= end; p++) {
+          container.appendChild(makePageBtn(p, p === page));
+        }
+
+        if (end < tp - 1) container.appendChild(makeDots());
+        if (end < tp) container.appendChild(makePageBtn(tp));
+
+        // แค่ตั้ง disabled ของ Prev/Next — ไม่ผูกคลิกที่นี่
+        const prev = document.getElementById("prevBtn");
+        const next = document.getElementById("nextBtn");
+        if (prev) prev.disabled = page <= 1;
+        if (next) next.disabled = page >= tp;
+      }
+
+      function makePageBtn(p, active = false) {
+        const btn = document.createElement("button");
+        btn.className = `rounded px-3 py-1.5 text-xs ${active ? "bg-black text-white" : "bg-zinc-300 text-black"}`;
+        btn.textContent = p;
+        btn.onclick = () => { page = p; render(); }; // ผูกคลิกให้ปุ่มเลขหน้า
+        return btn;
+      }
+
+      function makeDots() {
+        const b = document.createElement("button");
+        b.className = "bg-zinc-300 rounded px-3 py-1.5 text-xs";
+        b.textContent = "...";
+        b.disabled = true;
+        return b;
+      }
+
+      //  ฟังก์ชันเดียวสำหรับผูกปุ่ม Prev/Next/GO ทุกครั้งหลัง render
+      function bindPagerButtons() {
+        const tp = Math.max(1, Math.ceil((filtered?.length || 0) / pageSize));
+        const prev = document.getElementById("prevBtn");
+        const next = document.getElementById("nextBtn");
+        const goBtn = document.getElementById("goBtn");
+        const goInput = document.getElementById("goInput");
+
+        if (prev) {
+          prev.disabled = page <= 1;
+          prev.onclick = () => { if (page > 1) { page--; render(); } };
+        }
+        if (next) {
+          next.disabled = page >= tp;
+          next.onclick = () => { if (page < tp) { page++; render(); } };
+        }
+        if (goBtn && goInput) {
+          goBtn.onclick = () => {
+            const v = parseInt(goInput.value || "1", 10);
+            if (Number.isFinite(v)) {
+              page = Math.min(Math.max(1, v), tp);
+              render();
+            }
+          };
+        }
+      }
+    </script>
+
+    <script>
+      // ===== Month select: fill last 12 months & bind change =====
+      (function initMonthSelect() {
+        const sel = document.getElementById('monthSelect');
+        if (!sel) return;
+
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const monthNames = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // ล้าง options แล้วใส่ "All months"
+        sel.innerHTML = '';
+        const allOpt = document.createElement('option');
+        allOpt.value = ''; allOpt.textContent = 'All months';
+        sel.appendChild(allOpt);
+
+        // เติมย้อนหลัง 12 เดือน (รวมเดือนปัจจุบัน)
+        for (let i = 0; i < 12; i++) {
+          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const ym = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; // 2025-09
+          const opt = document.createElement('option');
+          opt.value = ym;
+          opt.textContent = monthNames[d.getMonth()];
+          if (i === 0) opt.selected = true; // เดือนปัจจุบัน
+          sel.appendChild(opt);
+        }
+
+        sel.addEventListener('change', () => {
+          // กลับหน้าแรกเมื่อเปลี่ยนเดือน
+          if (typeof page !== 'undefined') page = 1;
+
+          const monthVal = sel.value;                 // '' หรือ 'YYYY-MM'
+          const q = (document.getElementById('searchInput')?.value || '').trim();
+
+          // ถ้ามีฟังก์ชันโหลดข้อมูลจาก server ให้เรียกแบบนี้
+          if (typeof loadData === 'function') {
+            loadData({ page: 1, month: monthVal, q });
+            return;
+          }
+
+          // --- ทางเลือก: ถ้ายังไม่มี loadData ให้กรองฝั่งหน้า (แก้ field ให้ตรงของคุณ) ---
+          // ตัวอย่าง: สมมุติแต่ละแถวมีฟิลด์ r.docMonth = 'YYYY-MM'
+          if (typeof fullRows !== 'undefined') {
+            if (monthVal) {
+              filtered = fullRows.filter(r => (r.docMonth || r.month || '').startsWith(monthVal));
+            } else {
+              filtered = fullRows.slice();
+            }
+            // ถ้ามีค้นหาด้วยก็ filter ต่อได้...
+            // filtered = filtered.filter(... search condition ...);
+
+            if (typeof render === 'function') render();
+          }
+        });
+      })();
+    </script>
+
+      <script>
+        /** ---------- FILTER STATE ---------- **/
+        const FilterState = {
+          status: new Set(), // เก็บค่า "สั่งซื้อ" | "ไม่ต้องสั่งซื้อ" | "มากเกินไป"
+          skuCat: new Set(),
+        };
+
+        function getSkuCategory(sku) {
+          const ch = String(sku || "").trim().charAt(0).toUpperCase();
+          const map = {
+            G: "Glass",
+            A: "Aluminium",
+            S: "Sealant",
+            C: "C-Line",
+            Y: "Gypsum",
+            E: "Accessory",
+          };
+          return map[ch] || null;   // ไม่จัดหมวดอื่น ๆ ให้เป็น null
+        }
+
+
+        // คืนค่าที่ใช้อยู่เป็นอาเรย์ (เพื่อแสดงชิป)
+        function currentFiltersList() {
+          const out = [];
+          if (FilterState.status.size) {
+            out.push({ key: "status", label: "Status", values: Array.from(FilterState.status) });
+          }
+          return out;
+        }
+
+        /** ---------- APPLY FILTER ---------- **/
+        function applyFilters() {
+          filtered = fullRows.filter(r => {
+            // Status
+            if (FilterState.status.size > 0 && !FilterState.status.has(String(r.status || "").trim())) {
+              return false;
+            }
+            if (FilterState.skuCat.size > 0) {
+              const cat = getSkuCategory(r.skuNumber);
+              if (!FilterState.skuCat.has(cat)) return false;
+            }
+            return true;
+          });
+          page = 1;
+          render();
+          renderFilterChips();
+        }
+
+        /** ---------- CHIPS (บนแถบ Filters) ---------- **/
+        function renderFilterChips() {
+          const host = document.getElementById("filterChips");
+          if (!host) return;
+          host.innerHTML = "";
+
+          const list = currentFiltersList();
+          if (list.length === 0) return;
+
+          for (const f of list) {
+            for (const v of f.values) {
+              const chip = document.createElement("button");
+              chip.className = "text-xs bg-stone-200 rounded-full px-2 py-0.5 flex items-center gap-1";
+              chip.innerHTML = `<span>${f.label}: ${v}</span><span class="ml-1">✕</span>`;
+              chip.onclick = () => {
+                // ลบค่าจากชุด แล้ว apply ใหม่
+                FilterState[f.key].delete(v);
+                applyFilters();
+              };
+              host.appendChild(chip);
+            }
+          }
+
+          if (FilterState.skuCat.size) {
+          for (const v of Array.from(FilterState.skuCat)) {
+            const chip = document.createElement("button");
+            chip.className = "text-xs bg-stone-200 rounded-full px-2 py-0.5 flex items-center gap-1";
+            chip.innerHTML = `<span>SKU: ${v}</span><span class="ml-1">✕</span>`;
+            chip.onclick = () => { FilterState.skuCat.delete(v); applyFilters(); };
+            host.appendChild(chip);
+          }
+        }
+
+
+          // ปุ่มเคลียร์ทั้งหมด (ถ้ามีอย่างน้อย 1 ฟิลเตอร์)
+          const clearAll = document.createElement("button");
+          clearAll.className = "text-xs underline ml-2";
+          clearAll.textContent = "Clear all";
+          clearAll.onclick = () => {
+            FilterState.status.clear();
+            FilterState.skuCat.clear(); 
+            applyFilters();
+          };
+          host.appendChild(clearAll);
+        }
+
+        let skuPop = null;
+function openSkuFilter(anchorBtn) {
+  if (!skuPop) {
+    skuPop = document.createElement("div");
+    skuPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+    skuPop.style.minWidth = "180px";
+    document.body.appendChild(skuPop);
+  }
+
+  const options = ["Glass","Aluminium","Sealant","C-Line","Gypsum","Accessory"];
+  const selected = new Set(FilterState.skuCat);
+
+  skuPop.innerHTML = `
+    <div class="space-y-2">
+      ${options.map(opt => `
+        <label class="flex items-center gap-2">
+          <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="skuCancel" class="px-2 py-1 rounded border">Cancel</button>
+        <button id="skuApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+      </div>
+    </div>
+  `;
+
+  // วางชิดซ้ายของปุ่ม
+  skuPop.style.visibility = "hidden";
+  skuPop.style.display = "block";
+  const rect = anchorBtn.getBoundingClientRect();
+  const popW = skuPop.offsetWidth, popH = skuPop.offsetHeight, pad = 8;
+  let left = rect.right + window.scrollX - popW;
+  let top  = rect.bottom + window.scrollY + 6;
+  left = Math.max(window.scrollX + pad, Math.min(left, window.scrollX + window.innerWidth - popW - pad));
+  top  = Math.min(top, window.scrollY + window.innerHeight - popH - pad);
+  skuPop.style.left = `${left}px`;
+  skuPop.style.top  = `${top}px`;
+  skuPop.style.visibility = "visible";
+
+  const close = (e) => {
+    if (!skuPop.contains(e.target) && e.target !== anchorBtn) {
+      skuPop.style.display = "none";
+      document.removeEventListener("click", close, true);
+      anchorBtn.classList.remove("is-open");
     }
-    if (statusText) statusText.textContent = `Showing ${filtered.length}`;
-  }
+  };
+  setTimeout(() => document.addEventListener("click", close, true), 0);
 
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      filtered = fullRows.filter(r =>
-        (r.branchCode || "").toLowerCase().includes(q) ||
-        (r.skuNumber || "").toLowerCase().includes(q) ||
-        (r.productName || "").toLowerCase().includes(q)
-      );
-      render();
-    });
-  }
+  skuPop.querySelector("#skuCancel").onclick = () => { skuPop.style.display = "none"; };
+  skuPop.querySelector("#skuApply").onclick  = () => {
+    const checks = skuPop.querySelectorAll('input[type="checkbox"]');
+    FilterState.skuCat.clear();
+    checks.forEach(ch => { if (ch.checked) FilterState.skuCat.add(ch.value); });
+    skuPop.style.display = "none";
+    applyFilters();
+  };
+}
 
-  loadStockStatus();
-</script>
+        
+        /** ---------- POPOVER สำหรับ Status ---------- **/
+        let popEl = null;
+        function openStatusFilter(anchorBtn) {
+          // สร้าง popover ถ้ายังไม่มี
+          if (!popEl) {
+            popEl = document.createElement("div");
+            popEl.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+            popEl.style.minWidth = "180px";
+            document.body.appendChild(popEl);
+          }
+
+          // ค่าที่เลือกอยู่
+          const selected = new Set(FilterState.status);
+
+          // รายการตัวเลือก
+          const options = ["สั่งซื้อ", "ไม่ต้องสั่งซื้อ", "มากเกินไป"];
+
+          // เนื้อหา
+          popEl.innerHTML = `
+            <div class="space-y-2">
+              ${options.map(opt => `
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
+                  <span>${opt}</span>
+                </label>
+              `).join("")}
+              <div class="flex justify-end gap-2 pt-2">
+                <button id="fltCancel" class="px-2 py-1 rounded border">Cancel</button>
+                <button id="fltApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+              </div>
+            </div>
+          `;
+
+          // แสดงก่อนชั่วคราวเพื่อให้วัดขนาดได้
+            popEl.style.visibility = "hidden";
+            popEl.style.display = "block";
+
+            const rect  = anchorBtn.getBoundingClientRect();
+            const popW  = popEl.offsetWidth;
+            const popH  = popEl.offsetHeight;
+            const pad   = 8;
+
+            // วาง "ชิดซ้ายของปุ่ม" (ขอบขวาของ popover ตรงกับขอบขวาของปุ่ม)
+            let left = rect.right + window.scrollX - popW;  // ← ย้ายไปทางซ้าย
+            let top  = rect.bottom + window.scrollY + 6;
+
+            // กันหลุดจอ
+            const maxLeft = window.scrollX + window.innerWidth - popW - pad;
+            const minLeft = window.scrollX + pad;
+            left = Math.max(minLeft, Math.min(left, maxLeft));
+
+            const maxTop  = window.scrollY + window.innerHeight - popH - pad;
+            top = Math.min(top, maxTop);
+
+            popEl.style.left = `${left}px`;
+            popEl.style.top  = `${top}px`;
+            popEl.style.visibility = "visible";
+
+          // ปิดเมื่อคลิกนอก
+          const close = (e) => {
+            if (!popEl.contains(e.target) && e.target !== anchorBtn) {
+              popEl.style.display = "none";
+              document.removeEventListener("click", close, true);
+            }
+          };
+          setTimeout(() => document.addEventListener("click", close, true), 0);
+
+          // ปุ่มกด
+          popEl.querySelector("#fltCancel").onclick = () => { popEl.style.display = "none"; };
+          popEl.querySelector("#fltApply").onclick  = () => {
+            const checks = popEl.querySelectorAll('input[type="checkbox"]');
+            FilterState.status.clear();
+            checks.forEach(ch => { if (ch.checked) FilterState.status.add(ch.value); });
+            popEl.style.display = "none";
+            applyFilters();
+          };
+        }
+
+        /** ---------- BIND ปุ่มกรองบนหัวตาราง ---------- **/
+        function initHeaderFilters() {
+          // ปุ่มกรองของ Status
+          const btn = document.querySelector('th[data-sort-key="status"] .filter-btn');
+          if (btn) {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation(); // กันชนกับตัว sort
+              openStatusFilter(btn);
+            });
+          }
+
+          // ปุ่มกรองของ SKU Number
+          const skuBtn = document.querySelector('th[data-sort-key="skuNumber"] .filter-btn-sku');
+          if (skuBtn) {
+            skuBtn.addEventListener("click", (e) => {
+              e.stopPropagation();   // กันชนกับ sort
+              openSkuFilter(skuBtn);
+            });
+          }
+
+        }
+
+        // เรียกเมื่อโหลดข้อมูลเสร็จครั้งแรก
+        document.addEventListener("DOMContentLoaded", () => {
+          initHeaderFilters();
+        });
+        </script>
 
 
-
-
-    <!-- Footer Pagination / Status -->
-    <footer class="mt-24">
-      <div class="border border-black h-14 w-full flex items-center px-3 relative">
+    <footer class="mt-6">
+      <div class="border border-black h-12 w-full flex items-center px-3 relative bg-white">
         <!-- Left pagination -->
         <div class="flex items-center gap-2">
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Previous</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">1</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">2</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">3</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">4</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">5</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">...</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">10</button>
-          <button class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Next</button>
+          <button id="prevBtn" class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Previous</button>
+          <span id="pageButtons" class="flex items-center gap-2"></span>
+          <button id="nextBtn" class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Next</button>
         </div>
 
         <!-- Right side status and GO box -->
         <div class="ml-auto flex items-center gap-2">
-          <div class="rounded border border-stone-300 h-7 w-16"></div>
-          <div class="bg-zinc-300 rounded h-7 w-8 grid place-items-center">
-            <span class="text-black text-xs">GO</span>
-          </div>
-          <!-- <div class="text-center text-black text-xs">Showing 1 of 100</div> -->
-          <div class="text-center text-black text-xs">
-        <span id="statusText">Loading…</span>
+          <input id="goInput" type="number" min="1" class="rounded border border-stone-300 h-7 w-16 px-2 text-xs"
+            placeholder="Page" />
+          <button id="goBtn" class="bg-zinc-300 rounded h-7 px-3 grid place-items-center text-xs">GO</button>
+          <span id="statusText" class="text-xs text-stone-700"></span>
         </div>
       </div>
     </footer>
+
+
   </main>
 </body>
 

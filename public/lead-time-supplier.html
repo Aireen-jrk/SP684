@@ -8,10 +8,21 @@
 </head>
 <body class="min-h-screen bg-white">
   <!-- Top Bar -->
-  <header class="w-full h-16 bg-stone-900 flex items-center justify-between px-4">
+ <header class="w-full h-16 bg-stone-900 flex items-center px-4">
+  <!-- ซ้าย: โลโก้ + เมนู -->
+  <div class="flex items-center gap-6">
     <img src="img/TangnamLogo.png" alt="Logo" class="h-11" />
-    <div class="text-stone-400 text-xl font-bold">Name</div>
-  </header>
+    <nav class="flex items-center gap-8 text-xs text-white">
+      <a href="stock-status.html" class="font-bold">STOCK STATUS</a>
+      <a href="lead-time-supplier.html" class="">SUPPLIER</a>
+      <span>ITEM</span>
+      <span>ADD New Item</span>
+    </nav>
+  </div>
+
+  <!-- ขวาสุด: ชื่อ (เผื่อใช้ในอนาคต) -->
+  <div class="ml-auto text-stone-400 text-xl font-bold">Name</div>
+</header>
 
   <main class="mx-auto max-w-[1512px] px-4 py-8">
     <!-- Title row -->
@@ -29,13 +40,6 @@
       </div>
     </div>
 
-    <!-- Breadcrumb-ish captions from figma -->
-    <div class="mt-2 flex items-center gap-8 text-xs text-black">
-      <span class="font-bold">STOCK STATUS</span>
-      <span>SUPPLIER</span>
-      <span>ITEM</span>
-      <span>ADD New Item</span>
-    </div>
 
     <!-- Supplier Info card -->
     <section class="mt-6 rounded-2xl border border-stone-200 bg-stone-50/40">
@@ -184,3 +188,5 @@
   </main>
 </body>
 </html>
+lead-time-supplier.html
+9 KB
