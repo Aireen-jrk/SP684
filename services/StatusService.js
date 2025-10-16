@@ -40,5 +40,5 @@ export function determineStatus(p) {
   if (onHand + outstandingPo > minQty) return "มากเกินไป";
 
   // สั่งซื้อ
-  return "สั่งซื้อ";
+  return "น้อยเกินไป";
 }
