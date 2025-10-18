@@ -157,6 +157,25 @@ LEFT JOIN dbo.Accessory_GROUP AS ag
                     qty: Number(r[m] ?? 0)
                     }));
 
+
+            // ลำดับยอดขาย 6 เดือนตามคอลัมน์จริง (ตัวเลขล้วน)
+            const seq6 = colsStdev6.map(m => Number(r[m] ?? 0));
+
+            // Average of Growth Ratios = average( x_i / x_{i-1} ) สำหรับคู่ที่ตัวหาร > 0
+            let sumRat = 0, cntRat = 0;
+            for (let i = 1; i < seq6.length; i++) {
+            const prev = seq6[i - 1];
+            const curr = seq6[i];
+            if (prev > 0) {          // ข้ามคู่ที่ตัวหารเป็น 0
+                sumRat += (curr / prev);
+            }
+            cntRat++;
+            }
+            const growthAvg = cntRat > 0 ? (sumRat / cntRat) : 0;
+
+            // ใช้ค่า growthAvg เป็น Reorder Point (ปัดเป็นจำนวนเต็ม)
+            const trend  = Math.round(growthAvg * 100) / 100;
+
             return {
                 branchCode: r.branchCode,
                 skuNumber: r.skuNumber,
@@ -172,7 +191,7 @@ LEFT JOIN dbo.Accessory_GROUP AS ag
                 LT_SP: Number(r.LT_SP ?? 0),
                 LT_DC: Number(r.LT_DC ?? 0),
                 safetyStock,
-                reorderPoint,
+                trend,
                 minQty,
                 onHandQty,
                 backlog,
@@ -195,7 +214,7 @@ LEFT JOIN dbo.Accessory_GROUP AS ag
             productName:  'productName',
             averageDemand:'averageDemand',
             safetyStock:  'safetyStock',
-            reorderPoint: 'reorderPoint',
+            trend: 'trend',
             min:          'minQty',
             minQty:       'minQty',
             onhand:       'onHandQty',

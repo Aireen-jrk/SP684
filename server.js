@@ -4,10 +4,10 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getPool, sql as mssql } from "./db.js";
+import { getPool, sql as mssql } from "./db.js"; //
 
 import { StockStatusService } from "./services/StockStatusService.js";
-// import { ItemMovementService } from "./services/ItemMovementService.js"; // <-- เพิ่ม
+import { ItemMovementService } from "./services/ItemMovementService.js"; // <-- เพิ่ม
 
 // เชื่อมต่อ DB ทันที + log
 getPool()
@@ -26,25 +26,21 @@ app.use(express.static(path.join(__dirname, "public"))); // เสิร์ฟ�
 
 // สร้าง service instances
 const stockService  = new StockStatusService();
-// const itemMovementService = new ItemMovementService();
+const itemMovementService = new ItemMovementService();
 
 // // สร้าง item-movement
-// app.get("/api/item-movement", async (req, res) => {
-//   try {
-//     const { months = 6, sortBy = "branchCode", order = "asc", q = "" } = req.query;
-//     const rows = await itemMovementService.getItemMovement({
-//       months: Number(months) || 6,
-//       sortBy: String(sortBy),
-//       order: String(order).toLowerCase() === "desc" ? "desc" : "asc",
-//       q: String(q || "").trim()
-//     });
-//     // สำคัญ: ต้องห่อเป็น { rows: [...] } ให้ตรงกับที่หน้าเว็บคาดหวัง
-//     res.json({ rows });
-//   } catch (e) {
-//     console.error("[/api/item-movement] error:", e);
-//     res.status(500).json({ rows: [], error: String(e?.message || e) });
-//   }
-// });
+ app.get("/api/item-movement", async (req, res) => {
+  try {
+    const { months, excludeCurrent, countMode, branch, sortBy, order } = req.query;
+    const result = await stockService.getStockStatus({ months, excludeCurrent, countMode, branch, sortBy, order });
+    const rows = Array.isArray(result) ? result : (Array.isArray(result?.rows) ? result.rows : []);
+    res.json({ rows });
+  } catch (e) {
+    console.error("/api/stock-status error:", e);
+    res.status(500).json({ rows: [], error: e.message || "Failed" });
+  }
+});
+
 
 // ---- Sanity check ----
 app.get("/api/ping", (req, res) => res.json({ ok: true, now: new Date().toISOString() }));
@@ -257,5 +253,5 @@ cron.schedule("5 1 * * *", async () => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server: http://localhost:${PORT}`);
-  console.log(`Open UI: http://localhost:${PORT}/stock-status.html`);
+  console.log(`Open UI: http://localhost:${PORT}/Item_Movement.html`);
 });

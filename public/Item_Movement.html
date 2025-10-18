@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Item Movement</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-white">
+  <!-- Top Bar -->
+  <header class="w-full h-16 bg-stone-900 flex items-center px-4">
+    <div class="flex items-center gap-6">
+      <img src="img/TangnamLogo.png" alt="Logo" class="h-11" />
+      <nav class="flex items-center gap-8 text-xs text-white">
+        <a href="stock-status.html">STOCK STATUS</a>
+        <a href="replenishment_cycle.html">REPLENISHMENT CYCLE</a>
+        <span>STOCK ITEM PROPERTY </span>
+        <span>New SKU Reqeust</span>
+        <a href="Item_Movement.html" class="font-bold">ITEM MOVEMENT</a>
+      </nav>
+    </div>
+    <div class="ml-auto text-stone-400 text-xl font-bold">Name</div>
+  </header>
+
+  <main class="mx-auto max-w-none px-4">
+    <!-- Title -->
+    <div class="mt-8">
+      <h1 class="text-3xl font-bold text-black">ITEM MOVEMENT</h1>
+    </div>
+
+    <!-- Filters / Search Bar -->
+    <section class="mt-6">
+      <div class="border border-black h-14 w-full flex items-center px-3 gap-2">
+        <span class="text-base">Filters</span>
+        <img src="img/filter.png" alt="filter" class="h-4 w-4" />
+
+        <!-- Single Date -->
+        <div class="flex items-center gap-2">
+          <label for="singleDate" class="text-xs text-stone-700">Date</label>
+          <input id="singleDate" type="date" class="h-9 min-w-[160px] rounded border border-zinc-400 px-2 text-sm bg-white" />
+          <button id="dateApply" class="h-9 px-3 rounded bg-black text-white text-xs">Apply</button>
+          <button id="dateReset" class="h-9 px-3 rounded border text-xs">Reset</button>
+        </div>
+
+        <!-- Filter chips -->
+        <div id="filterChips" class="flex items-center gap-2"></div>
+
+        <!-- Search -->
+        <div class="ml-auto w-56 h-9 rounded border border-zinc-400 flex items-center px-2">
+          <input id="searchInput" type="text" class="w-full h-full outline-none text-xs placeholder:text-stone-900/60"
+            placeholder="Search by Keyword....." />
+        </div>
+      </div>
+    </section>
+
+    <!-- Table -->
+    <section class="mt-6 max-h-[58vh] overflow-auto">
+      <table class="table-fixed min-w-full border border-stone-300 text-sm text-left">
+        <thead>
+          <tr>
+            <th class="px-5 py-6 border" data-sort-key="branchCode">
+              Branch Code
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+              <button type="button" class="filter-btn-branch icon-btn ml-1" aria-label="filter branch">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+
+            <th class="px-3 py-5 border" data-sort-key="skuNumber">
+              SKU Number
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+              <button type="button" class="filter-btn-sku icon-btn ml-1" aria-label="filter sku">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+
+            <th class="px-3 py-2 border" data-sort-key="productName">
+              Product Name
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+
+            <th class="px-3 py-2 border" data-sort-key="averageDemand">
+              Average Demand
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+
+            <!-- ใช้คีย์ sort `min` ให้เหมือน Stock Status -->
+            <th class="px-3 py-2 border" data-sort-key="min">
+              Min
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+
+            <th class="px-3 py-2 border" data-sort-key="onHandQty">
+              OnHand-QTY
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+
+            <th class="px-3 py-2 border" data-sort-key="backlog">
+              BackOrder
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+
+            <th class="px-3 py-2 border" data-sort-key="turnOver">
+              TurnOver
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+              <button type="button" class="filter-btn-turnover icon-btn ml-1" aria-label="filter turnover">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+
+            <!-- ⭐ ใหม่: Overstock -->
+            <th class="px-3 py-2 border" data-sort-key="overStock">
+              Overstock
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+
+            <th class="px-3 py-2 border" data-sort-key="status">
+              Status
+              <button type="button" class="filter-btn-status icon-btn ml-1" aria-label="filter status">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </section>
+
+    <!-- ========= Core scripts ========= -->
+    <script>
+      const tableBody = document.getElementById("tableBody");
+      const searchInput = document.getElementById("searchInput");
+
+      let fullRows = [];
+      let filtered = [];
+
+      // sort-state
+      let currentSortBy = "branchCode";
+      let currentOrder  = "asc";
+
+      let _didResetFiltersOnce = false;
+
+      async function loadItemMovement() {
+        try {
+          // รีเซ็ตฟิลเตอร์ครั้งเดียวตอนเปิดหน้า
+          if (!_didResetFiltersOnce) {
+            FilterState.status.clear();
+            FilterState.skuCat.clear();
+            FilterState.branches.clear();
+            FilterState.turnoverRange = { min: null, max: null };
+            FilterState.singleDate = null;
+            if (searchInput) searchInput.value = "";
+            _didResetFiltersOnce = true;
+          }
+
+          const url = `/api/item-movement?months=6`
+            + `&sortBy=${encodeURIComponent(currentSortBy)}`
+            + `&order=${encodeURIComponent(currentOrder)}`
+            + `&ts=${Date.now()}`;
+
+          const res  = await fetch(url, { cache: "no-store" });
+          const data = await res.json();
+
+          fullRows = Array.isArray(data.rows) ? data.rows : [];
+
+          if (FilterState.status.size || FilterState.skuCat.size ||
+              FilterState.branches.size ||
+              (FilterState.turnoverRange && (FilterState.turnoverRange.min !== null || FilterState.turnoverRange.max !== null)) ||
+              FilterState.singleDate) {
+            applyFilters();
+          } else {
+            filtered = fullRows.slice();
+            page = 1;
+            // ถ้าเลือก sort overStock ให้เรียงใน client
+            if (currentSortBy === "overStock") sortFilteredByOverstock();
+            render();
+          }
+
+          updateSortIcons();
+        } catch (err) {
+          console.error("Failed to load /api/item-movement", err);
+          if (tableBody) {
+            tableBody.innerHTML = `
+              <tr><td colspan="10" class="px-3 py-2 border text-red-600">
+                ไม่สามารถโหลดข้อมูลได้ (ตรวจสอบว่า server ทำงานและเชื่อม DB ได้)
+              </td></tr>`;
+          }
+          const ste = document.getElementById("statusText");
+          if (ste) ste.textContent = "Error loading data";
+        }
+      }
+
+      function initHeaderSort() {
+        const thead = document.querySelector("thead");
+        if (!thead) return;
+
+        thead.addEventListener("click", (e) => {
+          const btn = e.target.closest(".sort-btn");
+          const th  = e.target.closest("th[data-sort-key]");
+          if (!btn || !th) return;
+
+          const key = th.dataset.sortKey;
+          if (currentSortBy === key) {
+            currentOrder = (currentOrder === "asc") ? "desc" : "asc";
+          } else {
+            currentSortBy = key;
+            currentOrder  = "asc";
+          }
+
+          // ⭐ overStock sort ที่ฝั่ง client (คีย์อื่นๆ เรียก server เหมือนเดิม)
+          if (key === "overStock") {
+            sortFilteredByOverstock();
+            updateSortIcons();
+            render();
+          } else {
+            loadItemMovement();
+          }
+        });
+      }
+
+      // ⭐ แก้ให้ sort และคำนวณ Overstock เสมอ: (onHandQty - minQty) ถ้า API ไม่ส่งมา
+      function sortFilteredByOverstock() {
+        const factor = currentOrder === "desc" ? -1 : 1;
+        filtered.sort((a, b) => {
+          const minA = Number.isFinite(+a.minQty) ? +a.minQty : ((+a.safetyStock || 0) + (+a.reorderPoint || 0));
+          const minB = Number.isFinite(+b.minQty) ? +b.minQty : ((+b.safetyStock || 0) + (+b.reorderPoint || 0));
+          const overA = Number.isFinite(+a.overStock) ? +a.overStock : ((+a.onHandQty || 0) - minA);
+          const overB = Number.isFinite(+b.overStock) ? +b.overStock : ((+b.onHandQty || 0) - minB);
+          if (overA === overB) return 0;
+          return (overA < overB ? -1 : 1) * factor;
+        });
+      }
+
+      function updateSortIcons() {
+        document.querySelectorAll("thead th[data-sort-key] .sort-btn").forEach(btn => {
+          const th  = btn.closest("th");
+          const key = th.getAttribute("data-sort-key");
+          btn.classList.toggle("active", key === currentSortBy);
+          const chev = btn.querySelector(".chev");
+          if (!chev) return;
+          chev.classList.remove("asc","desc");
+          if (key === currentSortBy) {
+            chev.classList.add(currentOrder === "desc" ? "desc" : "asc");
+          }
+        });
+      }
+
+      function statusCell(s) {
+        const n = String(s || "").trim();
+        if (n === "น้อยเกินไป" || n === "น้อยเกิน") {
+          return `<td class="px-3 py-2 border text-center whitespace-nowrap bg-red-500 text-white font-bold">${n}</td>`;
+        }
+        if (n === "มากเกินไป") {
+          return `<td class="px-3 py-2 border text-center whitespace-nowrap bg-yellow-300 text-black font-bold">${n}</td>`;
+        }
+        return `<td class="px-3 py-2 border text-center whitespace-nowrap">${n}</td>`;
+      }
+
+      let page = 1;
+      const pageSize = 26;
+
+      function pagedRows() {
+        const start = (page - 1) * pageSize;
+        return filtered.slice(start, start + pageSize);
+      }
+
+      function render() {
+        if (!tableBody) return;
+        tableBody.innerHTML = "";
+
+        if (!filtered || filtered.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="10" class="px-3 py-2 border text-stone-500">No data</td></tr>`;
+          const st0 = document.getElementById("statusText");
+          if (st0) st0.textContent = "Showing 0";
+          return;
+        }
+
+        const rows = pagedRows();
+        for (const r of rows) {
+          // ⭐ แสดง Overstock เสมอ (ไม่ซ่อน) และคำนวณสำรองถ้า API ไม่ส่งมา
+          const minQty = Number.isFinite(+r.minQty) ? +r.minQty : ((+r.safetyStock || 0) + (+r.reorderPoint || 0));
+          const over = Number.isFinite(+r.overStock) ? +r.overStock : ((+r.onHandQty || 0) - minQty);
+
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-stone-50";
+          tr.innerHTML = `
+            <td class="px-3 py-2 border">${r.branchCode ?? ""}</td>
+            <td class="px-3 py-2 border">${r.skuNumber ?? ""}</td>
+            <td class="px-3 py-2 border break-words">${r.productName ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${r.averageDemand ?? 0}</td>
+            <td class="px-3 py-2 border text-center">${minQty ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${r.onHandQty ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${r.backlog ?? 0}</td>
+            <td class="px-3 py-2 border text-center">${r.turnOver ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${over}</td>
+            ${statusCell(r.status ?? "")}
+          `;
+          tableBody.appendChild(tr);
+        }
+
+        const st = document.getElementById("statusText");
+        if (st) {
+          const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+          st.textContent = `Page ${page} of ${totalPages} (Showing ${rows.length} of ${filtered.length})`;
+        }
+
+        renderPager();
+        bindPagerButtons();
+      }
+
+      // Client search
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          const q = e.target.value.trim().toLowerCase();
+          filtered = fullRows.filter(r =>
+            (r.branchCode || "").toLowerCase().includes(q) ||
+            (r.skuNumber  || "").toLowerCase().includes(q) ||
+            (r.productName|| "").toLowerCase().includes(q)
+          );
+          page = 1;
+          if (currentSortBy === "overStock") sortFilteredByOverstock();
+          render();
+        });
+      }
+
+      // Init
+      document.addEventListener("DOMContentLoaded", () => {
+        initHeaderSort();
+        initHeaderFilters();
+        loadItemMovement();
+      });
+    </script>
+
+    <!-- ========= Pager ========= -->
+    <script>
+      function renderPager() {
+        const container = document.getElementById("pageButtons");
+        if (!container) return;
+        container.innerHTML = "";
+
+        const tp = Math.max(1, Math.ceil((filtered?.length || 0) / pageSize));
+        const windowSize = 5;
+        let start = Math.max(1, page - Math.floor(windowSize / 2));
+        let end   = Math.min(tp, start + windowSize - 1);
+        if (end - start + 1 < windowSize) start = Math.max(1, end - windowSize + 1);
+
+        if (start > 1) container.appendChild(makePageBtn(1));
+        if (start > 2) container.appendChild(makeDots());
+        for (let p = start; p <= end; p++) container.appendChild(makePageBtn(p, p === page));
+        if (end < tp - 1) container.appendChild(makeDots());
+        if (end < tp) container.appendChild(makePageBtn(tp));
+
+        const prev = document.getElementById("prevBtn");
+        const next = document.getElementById("nextBtn");
+        if (prev) prev.disabled = page <= 1;
+        if (next) next.disabled = page >= tp;
+      }
+
+      function makePageBtn(p, active = false) {
+        const btn = document.createElement("button");
+        btn.className = `rounded px-3 py-1.5 text-xs ${active ? "bg-black text-white" : "bg-zinc-300 text-black"}`;
+        btn.textContent = p;
+        btn.onclick = () => { page = p; render(); };
+        return btn;
+      }
+      function makeDots() {
+        const b = document.createElement("button");
+        b.className = "bg-zinc-300 rounded px-3 py-1.5 text-xs";
+        b.textContent = "...";
+        b.disabled = true;
+        return b;
+      }
+      function bindPagerButtons() {
+        const tp = Math.max(1, Math.ceil((filtered?.length || 0) / pageSize));
+        const prev = document.getElementById("prevBtn");
+        const next = document.getElementById("nextBtn");
+        const goBtn = document.getElementById("goBtn");
+        const goInput = document.getElementById("goInput");
+
+        if (prev) { prev.disabled = page <= 1; prev.onclick = () => { if (page > 1) { page--; render(); } }; }
+        if (next) { next.disabled = page >= tp; next.onclick = () => { if (page < tp) { page++; render(); } }; }
+        if (goBtn && goInput) {
+          goBtn.onclick = () => {
+            const v = parseInt(goInput.value || "1", 10);
+            if (Number.isFinite(v)) { page = Math.min(Math.max(1, v), tp); render(); }
+          };
+        }
+      }
+    </script>
+
+    <!-- ========= Filters (Status / SKU / Branch / TurnOver / Single Date) ========= -->
+    <script>
+      const FilterState = {
+        status: new Set(),                 // "น้อยเกินไป" | "ไม่ต้องสั่งซื้อ" | "มากเกินไป"
+        skuCat: new Set(),                 // Glass/Aluminium/Sealant/C-Line/Gypsum/Accessory
+        branches: new Set(),               // Branch codes
+        turnoverRange: { min: null, max: null },
+        singleDate: null,
+      };
+
+      const BRANCH_OPTIONS = [
+        "00TR","01TJ","02TN","03TS","04TP","05AY","06RY","07RB","08NR","09UB",
+        "10KK","11PL","12CM","13SR","14HY","15CB","16PK","17CR","18UD","19PC",
+        "20SK","21BS","22BP","23NS","24TL","25SB"
+      ];
+
+      function getSkuCategoryFromSkuNumber(sku) {
+        const ch = String(sku || "").trim().charAt(0).toUpperCase();
+        const map = { G:"Glass", A:"Aluminium", S:"Sealant", C:"C-Line", Y:"Gypsum", E:"Accessory" };
+        return map[ch] || null;
+      }
+
+      function parseRowDate(r) {
+        const d1 = String(r.docDate || "").trim();              // 'YYYY-MM-DD'
+        const ym = String(r.docMonth || r.month || "").trim();  // 'YYYY-MM'
+        if (/^\d{4}-\d{2}-\d{2}$/.test(d1)) {
+          const dt = new Date(d1 + "T00:00:00");
+          if (Number.isFinite(dt.getTime())) return { type: 'full', date: dt, ym: d1.slice(0,7) };
+        }
+        if (/^\d{4}-\d{2}$/.test(ym)) {
+          const dt = new Date(ym + "-01T00:00:00");
+          if (Number.isFinite(dt.getTime())) return { type: 'month', date: dt, ym };
+        }
+        return { type: null, date: null, ym: null };
+      }
+
+      function applyFilters() {
+        filtered = fullRows.filter(r => {
+          if (FilterState.status.size > 0 && !FilterState.status.has(String(r.status || "").trim())) return false;
+          if (FilterState.skuCat.size > 0) {
+            const cat = getSkuCategoryFromSkuNumber(r.skuNumber);
+            if (!FilterState.skuCat.has(cat)) return false;
+          }
+          if (FilterState.branches.size > 0) {
+            const bc = String(r.branchCode || "").trim();
+            if (!FilterState.branches.has(bc)) return false;
+          }
+          const { min, max } = FilterState.turnoverRange || {};
+          if (min !== null || max !== null) {
+            const v = Number(r.turnOver);
+            if (!Number.isFinite(v)) return false;
+            if (min !== null && v < min) return false;
+            if (max !== null && v > max) return false;
+          }
+          if (FilterState.singleDate) {
+            const rd = parseRowDate(r);
+            if (!rd.type) return false;
+            if (rd.type === 'full') {
+              const a = rd.date, b = FilterState.singleDate;
+              const sameDay = a.getFullYear() === b.getFullYear()
+                           && a.getMonth() === b.getMonth()
+                           && a.getDate() === b.getDate();
+              if (!sameDay) return false;
+            } else if (rd.type === 'month') {
+              const ymSel = `${FilterState.singleDate.getFullYear()}-${String(FilterState.singleDate.getMonth()+1).padStart(2,'0')}`;
+              if (rd.ym !== ymSel) return false;
+            }
+          }
+          return true;
+        });
+
+        page = 1;
+        if (currentSortBy === "overStock") sortFilteredByOverstock();
+        render();
+        renderFilterChips();
+      }
+
+      function renderFilterChips() {
+        const host = document.getElementById("filterChips");
+        if (!host) return;
+        host.innerHTML = "";
+
+        const list = [];
+        if (FilterState.status.size)   list.push({ key: "status",   label: "Status", values: Array.from(FilterState.status) });
+        if (FilterState.skuCat.size)   list.push({ key: "skuCat",   label: "SKU",    values: Array.from(FilterState.skuCat) });
+        if (FilterState.branches.size) list.push({ key: "branches", label: "Branch", values: Array.from(FilterState.branches) });
+        const tr = FilterState.turnoverRange || {};
+        if (tr.min !== null || tr.max !== null) {
+          const label = (tr.min !== null && tr.max !== null)
+            ? `${tr.min} – ${tr.max}`
+            : (tr.min !== null ? `≥ ${tr.min}` : `≤ ${tr.max}`);
+          list.push({ key: "turnOver", label: "TurnOver", values: [label] });
+        }
+        if (FilterState.singleDate) {
+          const label = FilterState.singleDate.toISOString().slice(0,10);
+          list.push({ key: "singleDate", label: "Date", values: [label] });
+        }
+
+        if (list.length === 0) return;
+
+        for (const f of list) {
+          for (const v of f.values) {
+            const chip = document.createElement("button");
+            chip.className = "text-xs bg-stone-200 rounded-full px-2 py-0.5 flex items-center gap-1";
+            chip.innerHTML = `<span>${f.label}: ${v}</span><span class="ml-1">✕</span>`;
+            chip.onclick = () => {
+              if (f.key === "status")      FilterState.status.delete(v);
+              if (f.key === "skuCat")      FilterState.skuCat.delete(v);
+              if (f.key === "branches")    FilterState.branches.delete(v);
+              if (f.key === "turnOver")    FilterState.turnoverRange = { min: null, max: null };
+              if (f.key === "singleDate")  FilterState.singleDate = null;
+              applyFilters();
+            };
+            host.appendChild(chip);
+          }
+        }
+
+        const clearAll = document.createElement("button");
+        clearAll.className = "text-xs underline ml-2";
+        clearAll.textContent = "Clear all";
+        clearAll.onclick = () => {
+          FilterState.status.clear();
+          FilterState.skuCat.clear();
+          FilterState.branches.clear();
+          FilterState.turnoverRange = { min: null, max: null };
+          FilterState.singleDate = null;
+          applyFilters();
+        };
+        host.appendChild(clearAll);
+      }
+
+      // ====== Popovers (เหมือนเดิม) ======
+      let skuPop = null, branchPop = null, statusPop = null, turnoverPop = null;
+
+      function openSkuFilter(anchorBtn) {
+        if (!skuPop) {
+          skuPop = document.createElement("div");
+          skuPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          skuPop.style.minWidth = "180px";
+          document.body.appendChild(skuPop);
+        }
+        const options = ["Glass","Aluminium","Sealant","C-Line","Gypsum","Accessory"];
+        const selected = new Set(FilterState.skuCat);
+        skuPop.innerHTML = `
+          <div class="space-y-2">
+            ${options.map(opt => `
+              <label class="flex items-center gap-2">
+                <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
+                <span>${opt}</span>
+              </label>
+            `).join("")}
+            <div class="flex justify-end gap-2 pt-2">
+              <button id="skuCancel" class="px-2 py-1 rounded border">Cancel</button>
+              <button id="skuApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+            </div>
+          </div>`;
+        skuPop.style.visibility = "hidden"; skuPop.style.display = "block";
+        const rect = anchorBtn.getBoundingClientRect();
+        const popW = skuPop.offsetWidth, popH = skuPop.offsetHeight, pad = 8;
+        let left = rect.right - popW, top = rect.bottom + 6;
+        left = Math.max(pad, Math.min(left, window.innerWidth - popW - pad));
+        top  = Math.min(top, window.innerHeight - popH - pad);
+        skuPop.style.left = `${left + window.scrollX}px`; skuPop.style.top = `${top + window.scrollY}px`;
+        skuPop.style.visibility = "visible";
+        const close = (e) => { if (!skuPop.contains(e.target) && e.target !== anchorBtn) { skuPop.style.display = "none"; document.removeEventListener("click", close, true); } };
+        setTimeout(() => document.addEventListener("click", close, true), 0);
+        skuPop.querySelector("#skuCancel").onclick = () => { skuPop.style.display = "none"; };
+        skuPop.querySelector("#skuApply").onclick  = () => {
+          const checks = skuPop.querySelectorAll('input[type="checkbox"]');
+          FilterState.skuCat.clear(); checks.forEach(ch => { if (ch.checked) FilterState.skuCat.add(ch.value); });
+          skuPop.style.display = "none"; applyFilters();
+        };
+      }
+
+      function openBranchFilter(anchorBtn) {
+        if (!branchPop) {
+          branchPop = document.createElement("div");
+          branchPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          branchPop.style.minWidth = "180px";
+          document.body.appendChild(branchPop);
+        }
+        const options = BRANCH_OPTIONS.slice();
+        const selected = new Set(FilterState.branches);
+        branchPop.innerHTML = `
+          <div class="max-h-80 overflow-auto space-y-2">
+            ${options.map(opt => `
+              <label class="flex items-center gap-2">
+                <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
+                <span>${opt}</span>
+              </label>`).join("")}
+            <div class="flex justify-end gap-2 pt-2">
+              <button id="branchCancel" class="px-2 py-1 rounded border">Cancel</button>
+              <button id="branchApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+            </div>
+          </div>`;
+        branchPop.style.visibility = "hidden"; branchPop.style.display = "block";
+        const rect = anchorBtn.getBoundingClientRect();
+        const popW = branchPop.offsetWidth, popH = branchPop.offsetHeight, pad = 8;
+        let left = rect.right - popW, top = rect.bottom + 6;
+        left = Math.max(pad, Math.min(left, window.innerWidth - popW - pad));
+        top  = Math.min(top, window.innerHeight - popH - pad);
+        branchPop.style.left = `${left + window.scrollX}px`; branchPop.style.top = `${top + window.scrollY}px`;
+        branchPop.style.visibility = "visible";
+        const close = (e) => { if (!branchPop.contains(e.target) && e.target !== anchorBtn) { branchPop.style.display = "none"; document.removeEventListener("click", close, true); } };
+        setTimeout(() => document.addEventListener("click", close, true), 0);
+        branchPop.querySelector("#branchCancel").onclick = () => { branchPop.style.display = "none"; };
+        branchPop.querySelector("#branchApply").onclick  = () => {
+          const checks = branchPop.querySelectorAll('input[type="checkbox"]');
+          FilterState.branches.clear(); checks.forEach(ch => { if (ch.checked) FilterState.branches.add(ch.value); });
+          branchPop.style.display = "none"; applyFilters();
+        };
+      }
+
+      function openStatusFilter(anchorBtn) {
+        if (!statusPop) {
+          statusPop = document.createElement("div");
+          statusPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          statusPop.style.minWidth = "180px";
+          document.body.appendChild(statusPop);
+        }
+        const selected = new Set(FilterState.status);
+        const options  = ["น้อยเกินไป","ไม่ต้องสั่งซื้อ","มากเกินไป"];
+        statusPop.innerHTML = `
+          <div class="space-y-2">
+            ${options.map(opt => `
+              <label class="flex items-center gap-2">
+                <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
+                <span>${opt}</span>
+              </label>`).join("")}
+            <div class="flex justify-end gap-2 pt-2">
+              <button id="stCancel" class="px-2 py-1 rounded border">Cancel</button>
+              <button id="stApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+            </div>
+          </div>`;
+        statusPop.style.visibility = "hidden"; statusPop.style.display = "block";
+        const rect = anchorBtn.getBoundingClientRect();
+        const popW = statusPop.offsetWidth, popH = statusPop.offsetHeight, pad = 8;
+        let left = rect.right - popW, top = rect.bottom + 6;
+        left = Math.max(pad, Math.min(left, window.innerWidth - popW - pad));
+        top  = Math.min(top, window.innerHeight - popH - pad);
+        statusPop.style.left = `${left + window.scrollX}px`; statusPop.style.top = `${top + window.scrollY}px`;
+        statusPop.style.visibility = "visible";
+        const close = (e) => { if (!statusPop.contains(e.target) && e.target !== anchorBtn) { statusPop.style.display = "none"; document.removeEventListener("click", close, true); } };
+        setTimeout(() => document.addEventListener("click", close, true), 0);
+        statusPop.querySelector("#stCancel").onclick = () => { statusPop.style.display = "none"; };
+        statusPop.querySelector("#stApply").onclick  = () => {
+          const checks = statusPop.querySelectorAll('input[type="checkbox"]');
+          FilterState.status.clear(); checks.forEach(ch => { if (ch.checked) FilterState.status.add(ch.value); });
+          statusPop.style.display = "none"; applyFilters();
+        };
+      }
+
+      function openTurnoverFilter(anchorBtn) {
+        if (!turnoverPop) {
+          turnoverPop = document.createElement("div");
+          turnoverPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          turnoverPop.style.minWidth = "220px";
+          document.body.appendChild(turnoverPop);
+        }
+        const { min, max } = FilterState.turnoverRange || {};
+        turnoverPop.innerHTML = `
+          <div class="space-y-2">
+            <label class="flex items-center gap-2">
+              Min: <input type="number" id="toMin" class="border rounded px-1 w-24" value="${min ?? ""}">
+            </label>
+            <label class="flex items-center gap-2">
+              Max: <input type="number" id="toMax" class="border rounded px-1 w-24" value="${max ?? ""}">
+            </label>
+            <div class="flex justify-end gap-2 pt-2">
+              <button id="toCancel" class="px-2 py-1 rounded border">Cancel</button>
+              <button id="toApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+            </div>
+          </div>`;
+        turnoverPop.style.visibility = "hidden"; turnoverPop.style.display = "block";
+        const rect = anchorBtn.getBoundingClientRect();
+        const popW = turnoverPop.offsetWidth, popH = turnoverPop.offsetHeight, pad = 8;
+        let left = rect.right - popW, top  = rect.bottom + 6;
+        left = Math.max(pad, Math.min(left, window.innerWidth - popW - pad));
+        top  = Math.min(top, window.innerHeight - popH - pad);
+        turnoverPop.style.left = `${left + window.scrollX}px`; turnoverPop.style.top = `${top + window.scrollY}px`;
+        turnoverPop.style.visibility = "visible";
+        const close = (e) => { if (!turnoverPop.contains(e.target) && e.target !== anchorBtn) {
+          turnoverPop.style.display = "none"; document.removeEventListener("click", close, true); } };
+        setTimeout(() => document.addEventListener("click", close, true), 0);
+        turnoverPop.querySelector("#toCancel").onclick = () => { turnoverPop.style.display = "none"; };
+        turnoverPop.querySelector("#toApply").onclick  = () => {
+          let vmin = parseFloat(document.getElementById("toMin").value);
+          let vmax = parseFloat(document.getElementById("toMax").value);
+          vmin = Number.isFinite(vmin) ? vmin : null;
+          vmax = Number.isFinite(vmax) ? vmax : null;
+          if (vmin !== null && vmax !== null && vmin > vmax) [vmin, vmax] = [vmax, vmin];
+          FilterState.turnoverRange = { min: vmin, max: vmax };
+          turnoverPop.style.display = "none";
+          applyFilters();
+        };
+      }
+
+      function initHeaderFilters() {
+        const stBtn  = document.querySelector('th[data-sort-key="status"] .filter-btn-status');
+        const skuBtn = document.querySelector('th[data-sort-key="skuNumber"] .filter-btn-sku');
+        const brBtn  = document.querySelector('th[data-sort-key="branchCode"] .filter-btn-branch');
+        const toBtn  = document.querySelector('th[data-sort-key="turnOver"] .filter-btn-turnover');
+
+        stBtn?.addEventListener("click", (e) => { e.stopPropagation(); openStatusFilter(stBtn); });
+        skuBtn?.addEventListener("click", (e) => { e.stopPropagation(); openSkuFilter(skuBtn); });
+        brBtn?.addEventListener("click",  (e) => { e.stopPropagation(); openBranchFilter(brBtn); });
+        toBtn?.addEventListener("click",  (e) => { e.stopPropagation(); openTurnoverFilter(toBtn); });
+      }
+
+      // Lock future dates
+      document.addEventListener("DOMContentLoaded", () => {
+        const sd = document.getElementById("singleDate");
+        const btnApply = document.getElementById("dateApply");
+        const btnReset = document.getElementById("dateReset");
+        if (sd) {
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, "0");
+          const dd = String(today.getDate()).padStart(2, "0");
+          sd.max = `${yyyy}-${mm}-${dd}`;
+        }
+        function parseDateInput(el) {
+          const v = (el?.value || "").trim();
+          if (!v) return null;
+          const d = new Date(v + "T00:00:00");
+          return Number.isFinite(d.getTime()) ? d : null;
+        }
+        btnApply?.addEventListener("click", () => { FilterState.singleDate = parseDateInput(sd); applyFilters(); });
+        btnReset?.addEventListener("click", () => { if (sd) sd.value = ""; FilterState.singleDate = null; applyFilters(); });
+        sd?.addEventListener("keydown", (e) => { if (e.key === "Enter") btnApply?.click(); });
+      });
+    </script>
+
+    <!-- ========= Footer / Pager controls ========= -->
+    <footer class="mt-6">
+      <div class="border border-black h-12 w-full flex items-center px-3 relative bg-white">
+        <!-- Left pagination -->
+        <div class="flex items-center gap-2">
+          <button id="prevBtn" class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Previous</button>
+          <span id="pageButtons" class="flex items-center gap-2"></span>
+          <button id="nextBtn" class="bg-zinc-300 rounded px-3 py-1.5 text-xs">Next</button>
+        </div>
+        <!-- Right status + GO -->
+        <div class="ml-auto flex items-center gap-2">
+          <input id="goInput" type="number" min="1" class="rounded border border-stone-300 h-7 w-16 px-2 text-xs" placeholder="Page" />
+          <button id="goBtn" class="bg-zinc-300 rounded h-7 px-3 grid place-items-center text-xs">GO</button>
+          <span id="statusText" class="text-xs text-stone-700"></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
