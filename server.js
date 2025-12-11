@@ -5,9 +5,10 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { getPool, sql as mssql } from "./db.js"; //
+import  stockStatusRoute from "./backend/routes/stockStatusRoute.js";
 
-import { StockStatusService } from "./services/StockStatusService.js";
-import { ItemMovementService } from "./services/ItemMovementService.js"; // <-- เพิ่ม
+import { StockStatusService } from "./backend/services/StockStatusService.js";
+import { ItemMovementService } from "./backend/services/ItemMovementService.js"; // <-- เพิ่ม
 
 // เชื่อมต่อ DB ทันที + log
 getPool()
@@ -21,6 +22,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(cors());
 app.use(express.json());
+// app.use("/", stockStatusRoute);   // สำคัญ!!
+app.use("/api", stockStatusRoute);
+
 app.use(express.static(path.join(__dirname, "public"))); // เสิร์ฟไฟล์หน้าเว็บจากโฟลเดอร์ public
 // app.use(express.urlencoded({ extended: true }));
 
@@ -47,22 +51,24 @@ app.get("/api/ping", (req, res) => res.json({ ok: true, now: new Date().toISOStr
 
 
 // ---- 2) Average Demand จากคอลัมน์รายเดือน ----
-app.get("/api/stock-status", async (req, res) => {
-  try {
-    // เพิ่ม sortBy, order เข้ามาด้วย
-    const { months, excludeCurrent, countMode, branch, sortBy, order } = req.query;
+// app.get("/api/stock-status", async (req, res) => {
+//   try {
+//     // เพิ่ม sortBy, order เข้ามาด้วย
+//     const { months, excludeCurrent, countMode, branch, sortBy, order } = req.query;
 
-    // ส่งต่อไปที่ service
-    const data = await stockService.getStockStatus({
-      months, excludeCurrent, countMode, branch, sortBy, order
-    });
+//     // ส่งต่อไปที่ service
+//     const data = await stockService.getStockStatus({
+//       months, excludeCurrent, countMode, branch, sortBy, order
+//     });
 
-    res.json(data);
-  } catch (e) {
-    console.error("/api/stock-status:", e);
-    res.status(500).json({ error: e.message || "Failed" });
-  }
-});
+//     res.json(data);
+//   } catch (e) {
+//     console.error("/api/stock-status:", e);
+//     res.status(500).json({ error: e.message || "Failed" });
+//   }
+// });
+
+
 
 function extractYmd(req) {
   const q = req?.query ?? {};
@@ -253,5 +259,5 @@ cron.schedule("5 1 * * *", async () => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server: http://localhost:${PORT}`);
-  console.log(`Open UI: http://localhost:${PORT}/Item_Movement.html`);
+  console.log(`Open UI: http://localhost:${PORT}/stock-status.html`);
 });

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,11 +42,9 @@
         <div class="flex items-center gap-2">
           <label for="singleDate" class="text-xs text-stone-700">Date</label>
           <input id="singleDate" type="date"
-                 class="h-9 min-w-[160px] rounded border border-zinc-400 px-2 text-sm bg-white" />
-          <button id="dateApply"
-                  class="h-9 px-3 rounded bg-black text-white text-xs">Apply</button>
-          <button id="dateReset"
-                  class="h-9 px-3 rounded border text-xs">Reset</button>
+            class="h-9 min-w-[160px] rounded border border-zinc-400 px-2 text-sm bg-white" />
+          <button id="dateApply" class="h-9 px-3 rounded bg-black text-white text-xs">Apply</button>
+          <button id="dateReset" class="h-9 px-3 rounded border text-xs">Reset</button>
         </div>
 
         <!-- Filter chips host -->
@@ -62,7 +61,7 @@
     <!-- Table -->
     <section class="mt-6 max-h-[58vh] overflow-auto">
       <table class="table-fixed min-w-full border border-stone-300 text-sm text-left">
-        <thead>
+        <thead class="sticky top-0 z-10 bg-white">
           <tr>
             <th type="button" class="px-5 py-6 border" data-sort-key="branchCode">
               Branch Code
@@ -80,44 +79,24 @@
               </button>
             </th>
 
-            
-<th class="px-3 py-2 border" data-sort-key="brandName">
-  Brand
-  <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
-  <button type="button" class="filter-btn-brand icon-btn ml-1" aria-label="filter brand">
-    <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
-  </button>
-</th>
+            <th class="px-3 py-2 border" data-sort-key="brandName">
+              Brand
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+              <button type="button" class="filter-btn-brand icon-btn ml-1" aria-label="filter brand">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
 
-<th class="px-3 py-2 border" data-sort-key="accGroupName">
-  Group
-  <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
-  <button type="button" class="filter-btn-group icon-btn ml-1" aria-label="filter group">
-    <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
-  </button>
-</th>
-
-
-
+            <th class="px-3 py-2 border" data-sort-key="accGroupName">
+              Group
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+              <button type="button" class="filter-btn-group icon-btn ml-1" aria-label="filter group">
+                <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
 
             <th class="px-3 py-2 border" data-sort-key="productName">
               Product Name
-              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
-            </th>
-            <th class="px-3 py-2 border" data-sort-key="averageDemand">
-              Average Demand
-              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
-            </th>
-            <th class="px-3 py-2 border" data-sort-key="safetyStock">
-              Safety Stock
-              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
-            </th>
-            <th class="px-3 py-2 border" data-sort-key="trend">
-              Trend
-              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
-            </th>
-            <th class="px-3 py-2 border" data-sort-key="min">
-              Min
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="onHandQty">
@@ -128,11 +107,45 @@
               BackOrder
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
+            <th class="px-3 py-2 border" data-sort-key="averageDemand">
+              Average Demand
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
             <th class="px-3 py-2 border" data-sort-key="turnOver">
-              TurnOver
+              MOH
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
               <button type="button" class="filter-btn-turnover icon-btn ml-1" aria-label="filter turnover">
                 <img src="img/filter.png" alt="" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="trend">
+              Trend
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="safetyStock">
+              safetyStock
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="min">
+              Min
+              <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
+            </th>
+            <th class="px-3 py-2 border" data-sort-key="stockMoving">
+              Stock Moving
+              <button type="button" class="filter-btn-moving icon-btn ml-1" aria-label="filter stock-moving">
+                <img src="img/filter.png" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th>
+            <!-- <th class="px-3 py-2 border" data-sort-key="inactive">
+              Inactive
+              <button type="button" class="filter-btn-inactive icon-btn ml-1" aria-label="filter inactive">
+                <img src="img/filter.png" class="h-3 w-3 opacity-70 hover:opacity-100">
+              </button>
+            </th> -->
+            <th class="px-3 py-2 border" data-sort-key="deadStock">
+              DeadStock
+              <button type="button" class="filter-btn-dead icon-btn ml-1" aria-label="filter dead">
+                <img src="img/filter.png" class="h-3 w-3 opacity-70 hover:opacity-100">
               </button>
             </th>
 
@@ -172,15 +185,18 @@
             FilterState.brands.clear();
             FilterState.turnoverRange = { min: null, max: null };
             FilterState.singleDate = null;
-            
+
             if (searchInput) searchInput.value = "";
             _didResetFiltersOnce = true;
           }
+          const selectedDate = FilterState.singleDate
+                ? FilterState.singleDate.toISOString().slice(0,10)
+                : null;
+          const url =
+  selectedDate
+    ? `/api/stock-status?date=${selectedDate}`
+    : `/api/stock-status`;
 
-          const url = `/api/stock-status?months=6`
-            + `&sortBy=${encodeURIComponent(currentSortBy)}`
-            + `&order=${encodeURIComponent(currentOrder)}`
-            + `&ts=${Date.now()}`;
 
           const res = await fetch(url, { cache: "no-store" });
           const data = await res.json();
@@ -188,9 +204,9 @@
           fullRows = Array.isArray(data.rows) ? data.rows : [];
 
           // ถ้ามีฟิลเตอร์ที่ผู้ใช้ตั้งอยู่ ค่อยกรอง ไม่งั้นโชว์ทั้งหมด
-          if (FilterState.status.size || FilterState.skuCat.size || FilterState.branches.size  || FilterState.brands.size
-              || (FilterState.turnoverRange && (FilterState.turnoverRange.min !== null || FilterState.turnoverRange.max !== null))
-              || FilterState.singleDate) {
+          if (FilterState.status.size || FilterState.skuCat.size || FilterState.branches.size || FilterState.brands.size
+            || (FilterState.turnoverRange && (FilterState.turnoverRange.min !== null || FilterState.turnoverRange.max !== null))
+            || FilterState.singleDate) {
             applyFilters();
           } else {
             filtered = fullRows.slice();
@@ -273,16 +289,44 @@
         tableBody.innerHTML = "";
 
         if (!filtered || filtered.length === 0) {
-          tableBody.innerHTML = `<tr><td colspan="12" class="px-3 py-2 border text-stone-500">No data</td></tr>`;
+          tableBody.innerHTML = `<tr><td colspan="16" class="px-3 py-2 border text-stone-500">No data</td></tr>`;
           const st0 = document.getElementById("statusText");
           if (st0) st0.textContent = "Showing 0";
           return;
         }
 
-const rows = pagedRows();
-const startIndex = (page - 1) * pageSize;
+        const rows = pagedRows();
+        const startIndex = (page - 1) * pageSize;
 
         rows.forEach((r, i) => {
+          // ========== Stock Moving ==========
+          let stockMovingHTML = "";
+          if (r.stockMoving === "Fast moving") {
+            stockMovingHTML = `<td class="px-3 py-2 border text-green-600">Fast moving</td>`;
+          } else if (r.stockMoving === "Slow moving") {
+            stockMovingHTML = `<td class="px-3 py-2 border text-red-600">Slow moving</td>`;
+          } else {
+            stockMovingHTML = `<td class="px-3 py-2 border"></td>`;
+          }
+
+          // ========== Inactive =============
+          let inactiveHTML = r.isInactive
+            ? `<td class="px-3 py-2 border text-center"><span class="inline-block w-5 h-5 rounded-full bg-gray-200 flex justify-center items-center text-sm">✔</span></td>`
+            : `<td class="px-3 py-2 border"></td>`;
+
+          // ========== DeadStock =============
+          let deadHTML = r.isDeadStock
+            ? `<td class="px-3 py-2 border text-center"><span class="inline-block w-5 h-5 rounded-full bg-gray-200 flex justify-center items-center text-sm">✔</span></td>`
+            : `<td class="px-3 py-2 border"></td>`;
+
+          // ========== Trend Color ==========  
+          let trendColor = "";
+          if (r.trend >= 1) {
+            trendColor = "text-green-600";
+          } else if (r.trend < 1) {
+            trendColor = "text-red-600";
+          }
+
           const idx = startIndex + i;
           const tr = document.createElement("tr");
           tr.className = "hover:bg-stone-50";
@@ -292,22 +336,27 @@ const startIndex = (page - 1) * pageSize;
             <td class="px-3 py-2 border">${(r.brandName && String(r.brandName).trim()) || "-"}</td>
             <td class="px-3 py-2 border">${(r.accGroupName && String(r.accGroupName).trim()) || "-"}</td>
             <td class="px-3 py-2 border break-words">${r.productName ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${r.onHandQty ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${r.backlog ?? 0}</td>
             <td class="px-3 py-2 border text-center">
               <button class="avg-pop underline text-blue-600" data-idx="${idx}">
                 ${r.averageDemand ?? 0}
               </button>
             </td>
-            <td class="px-3 py-2 border text-center">${r.safetyStock ?? ""}</td>
-            <td class="px-3 py-2 border text-center">${r.trend ?? ""}</td>
-            <td class="px-3 py-2 border text-center">${r.minQty ?? ""}</td>
-            <td class="px-3 py-2 border text-center">${r.onHandQty ?? ""}</td>
-            <td class="px-3 py-2 border text-center">${r.backlog ?? 0}</td>
             <td class="px-3 py-2 border text-center">${r.turnOver ?? ""}</td>
+            <td class="px-3 py-2 border text-center ${trendColor}">
+              ${r.trend ?? ""}
+            </td>
+            <td class="px-3 py-2 border text-center">${r.safetyStock ?? ""}</td>
+            <td class="px-3 py-2 border text-center">${r.minQty ?? ""}</td>
+            ${stockMovingHTML}
+            
+            ${deadHTML}
             ${statusCell(r.status ?? "")}
           `;
           tableBody.appendChild(tr);
         });
-
+// ${inactiveHTML}
         const st = document.getElementById("statusText");
         if (st) {
           const totalPages = Math.ceil(filtered.length / pageSize) || 1;
@@ -326,14 +375,14 @@ const startIndex = (page - 1) * pageSize;
             (r.branchCode || "").toLowerCase().includes(q) ||
             (r.skuNumber || "").toLowerCase().includes(q) ||
             (r.productName || "").toLowerCase().includes(q) ||
-            (r.brandName   || "").toLowerCase().includes(q) ||
+            (r.brandName || "").toLowerCase().includes(q) ||
             (r.accGroupName || "").toLowerCase().includes(q)
           );
           page = 1;
           render();
         });
       }
- 
+
       // ผูก sort และโหลดครั้งแรกเมื่อ DOM พร้อม
       document.addEventListener("DOMContentLoaded", () => {
         initHeaderSort();
@@ -428,13 +477,17 @@ const startIndex = (page - 1) * pageSize;
         groups: new Set(),                  // Group names
         turnoverRange: { min: null, max: null }, // TurnOver range
         singleDate: null,                   // เลือกวันเดียว (Date object หรือ null)
+
+        stockMoving: new Set(),   // NEW
+        inactive: null,           // true / false / null
+        deadStock: null           // true / false / null
       };
 
       // === Fixed branch options (ไม่อิง fullRows) ===
       const BRANCH_OPTIONS = [
-        "00TR","01TJ","02TN","03TS","04TP","05AY","06RY","07RB","08NR","09UB",
-        "10KK","11PL","12CM","13SR","14HY","15CB","16PK","17CR","18UD","19PC",
-        "20SK","21BS","22BP","23NS","24TL","25SB"
+        "00TR", "01TJ", "02TN", "03TS", "04TP", "05AY", "06RY", "07RB", "08NR", "09UB",
+        "10KK", "11PL", "12CM", "13SR", "14HY", "15CB", "16PK", "17CR", "18UD", "19PC",
+        "20SK", "21BS", "22BP", "23NS", "24TL", "25SB"
       ];
 
       // ใช้ตัวอักษรตัวแรกของ skuNumber หลัง trim แล้ว map เป็นหมวด
@@ -452,7 +505,7 @@ const startIndex = (page - 1) * pageSize;
 
         if (/^\d{4}-\d{2}-\d{2}$/.test(d1)) {
           const dt = new Date(d1 + "T00:00:00");
-          if (Number.isFinite(dt.getTime())) return { type: 'full', date: dt, ym: d1.slice(0,7) };
+          if (Number.isFinite(dt.getTime())) return { type: 'full', date: dt, ym: d1.slice(0, 7) };
         }
         if (/^\d{4}-\d{2}$/.test(ym)) {
           const dt = new Date(ym + "-01T00:00:00");
@@ -479,18 +532,34 @@ const startIndex = (page - 1) * pageSize;
             if (!FilterState.branches.has(bc)) return false;
           }
 
+          // Stock Moving Filter
+          if (FilterState.stockMoving.size > 0) {
+            if (!FilterState.stockMoving.has(r.stockMoving || "")) return false;
+          }
+
+          // Inactive Filter
+          if (FilterState.inactive !== null) {
+            if (r.isInactive !== FilterState.inactive) return false;
+          }
+
+          // DeadStock Filter
+          if (FilterState.deadStock !== null) {
+            if (r.isDeadStock !== FilterState.deadStock) return false;
+          }
+
+
           // Brand (dynamic)
-if (FilterState.brands.size > 0) {
-  const bn = (r.brandName ?? "").toString().trim();
-  if (!FilterState.brands.has(bn)) return false;
-}
+          if (FilterState.brands.size > 0) {
+            const bn = (r.brandName ?? "").toString().trim();
+            if (!FilterState.brands.has(bn)) return false;
+          }
 
 
-// Group (dynamic)
-if (FilterState.groups.size > 0) {
-  const gn = (r.accGroupName ?? "").toString().trim();
-  if (!FilterState.groups.has(gn)) return false;
-}
+          // Group (dynamic)
+          if (FilterState.groups.size > 0) {
+            const gn = (r.accGroupName ?? "").toString().trim();
+            if (!FilterState.groups.has(gn)) return false;
+          }
 
 
           // TurnOver range
@@ -510,12 +579,12 @@ if (FilterState.groups.size > 0) {
             if (rd.type === 'full') {
               const a = rd.date, b = FilterState.singleDate;
               const sameDay = a.getFullYear() === b.getFullYear()
-                           && a.getMonth() === b.getMonth()
-                           && a.getDate() === b.getDate();
+                && a.getMonth() === b.getMonth()
+                && a.getDate() === b.getDate();
               if (!sameDay) return false;
             } else if (rd.type === 'month') {
               // ถ้าแถวเป็นระดับเดือน ให้ผ่านเมื่อเดือน-ปีตรงกับวันเลือก
-              const ymSel = `${FilterState.singleDate.getFullYear()}-${String(FilterState.singleDate.getMonth()+1).padStart(2,'0')}`;
+              const ymSel = `${FilterState.singleDate.getFullYear()}-${String(FilterState.singleDate.getMonth()).padStart(2, '0')}`;
               if (rd.ym !== ymSel) return false;
             }
           }
@@ -535,12 +604,37 @@ if (FilterState.groups.size > 0) {
         host.innerHTML = "";
 
         const list = [];
-        if (FilterState.status.size)   list.push({ key: "status",   label: "Status", values: Array.from(FilterState.status) });
-        if (FilterState.skuCat.size)   list.push({ key: "skuCat",   label: "SKU",    values: Array.from(FilterState.skuCat) });
+        if (FilterState.status.size) list.push({ key: "status", label: "Status", values: Array.from(FilterState.status) });
+        if (FilterState.skuCat.size) list.push({ key: "skuCat", label: "SKU", values: Array.from(FilterState.skuCat) });
         if (FilterState.branches.size) list.push({ key: "branches", label: "Branch", values: Array.from(FilterState.branches) });
-        if (FilterState.brands.size) {list.push({ key: "brands", label: "Brand", values: Array.from(FilterState.brands) });}
-        if (FilterState.groups.size) {list.push({ key: "groups", label: "Group", values: Array.from(FilterState.groups) });}
+        if (FilterState.brands.size) { list.push({ key: "brands", label: "Brand", values: Array.from(FilterState.brands) }); }
+        if (FilterState.groups.size) { list.push({ key: "groups", label: "Group", values: Array.from(FilterState.groups) }); }
+        // Stock Moving
+        if (FilterState.stockMoving.size) {
+          list.push({
+            key: "stockMoving",
+            label: "Moving",
+            values: Array.from(FilterState.stockMoving)
+          });
+        }
 
+        // Inactive
+        if (FilterState.inactive !== null) {
+          list.push({
+            key: "inactive",
+            label: "Inactive",
+            values: [FilterState.inactive ? "✔" : "-"]
+          });
+        }
+
+        // DeadStock
+        if (FilterState.deadStock !== null) {
+          list.push({
+            key: "deadStock",
+            label: "DeadStock",
+            values: [FilterState.deadStock ? "✔" : "-"]
+          });
+        }
         const tr = FilterState.turnoverRange || {};
         if (tr.min !== null || tr.max !== null) {
           const label = (tr.min !== null && tr.max !== null)
@@ -550,7 +644,7 @@ if (FilterState.groups.size > 0) {
         }
         // Single date chip
         if (FilterState.singleDate) {
-          const label = FilterState.singleDate.toISOString().slice(0,10);
+          const label = FilterState.singleDate.toISOString().slice(0, 10);
           list.push({ key: "singleDate", label: "Date", values: [label] });
         }
 
@@ -562,14 +656,16 @@ if (FilterState.groups.size > 0) {
             chip.className = "text-xs bg-stone-200 rounded-full px-2 py-0.5 flex items-center gap-1";
             chip.innerHTML = `<span>${f.label}: ${v}</span><span class="ml-1">✕</span>`;
             chip.onclick = () => {
-              if (f.key === "status")      FilterState.status.delete(v);
-              if (f.key === "skuCat")      FilterState.skuCat.delete(v);
-              if (f.key === "branches")    FilterState.branches.delete(v);
-              if (f.key === "turnOver")    FilterState.turnoverRange = { min: null, max: null };
-              if (f.key === "singleDate")  FilterState.singleDate = null;
+              if (f.key === "status") FilterState.status.delete(v);
+              if (f.key === "skuCat") FilterState.skuCat.delete(v);
+              if (f.key === "branches") FilterState.branches.delete(v);
+              if (f.key === "turnOver") FilterState.turnoverRange = { min: null, max: null };
+              if (f.key === "singleDate") FilterState.singleDate = null;
               if (f.key === "brands") FilterState.brands.delete(v);
               if (f.key === "groups") FilterState.groups.delete(v);
-
+              if (f.key === "stockMoving") FilterState.stockMoving.delete(v);
+              if (f.key === "inactive") FilterState.inactive = null;
+              if (f.key === "deadStock") FilterState.deadStock = null;
 
               applyFilters();
             };
@@ -589,6 +685,9 @@ if (FilterState.groups.size > 0) {
           FilterState.turnoverRange = { min: null, max: null };
           FilterState.singleDate = null;
           FilterState.groups.clear();
+          FilterState.stockMoving.clear();
+          FilterState.inactive = null;
+          FilterState.deadStock = null;
           applyFilters();
         };
         host.appendChild(clearAll);
@@ -655,19 +754,19 @@ if (FilterState.groups.size > 0) {
       }
 
       /** ---------- Branch popover (fixed list) ---------- **/
-  let branchPop = null;
-  function openBranchFilter(anchorBtn) {
-    if (!branchPop) {
-      branchPop = document.createElement("div");
-      branchPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
-      branchPop.style.minWidth = "180px";
-      document.body.appendChild(branchPop);
-    }
+      let branchPop = null;
+      function openBranchFilter(anchorBtn) {
+        if (!branchPop) {
+          branchPop = document.createElement("div");
+          branchPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          branchPop.style.minWidth = "180px";
+          document.body.appendChild(branchPop);
+        }
 
-    const options  = BRANCH_OPTIONS.slice();
-    const selected = new Set(FilterState.branches);
+        const options = BRANCH_OPTIONS.slice();
+        const selected = new Set(FilterState.branches);
 
-    branchPop.innerHTML = `
+        branchPop.innerHTML = `
       <div class="max-h-80 overflow-auto space-y-2">
         ${options.map(opt => `
           <label class="flex items-center gap-2">
@@ -682,102 +781,136 @@ if (FilterState.groups.size > 0) {
       </div>
     `;
 
-    // วาง popover ใต้ปุ่ม
-    branchPop.style.visibility = "hidden";
-    branchPop.style.display = "block";
-    const rect = anchorBtn.getBoundingClientRect();
-    const popW = branchPop.offsetWidth, popH = branchPop.offsetHeight, pad = 8;
-    let left = rect.right + window.scrollX - popW;
-    let top  = rect.bottom + window.scrollY + 6;
-    left = Math.max(window.scrollX + pad, Math.min(left, window.scrollX + window.innerWidth - popW - pad));
-    top  = Math.min(top,  window.scrollY + window.innerHeight - popH - pad);
-    branchPop.style.left = `${left}px`;
-    branchPop.style.top  = `${top}px`;
-    branchPop.style.visibility = "visible";
+        // วาง popover ใต้ปุ่ม
+        branchPop.style.visibility = "hidden";
+        branchPop.style.display = "block";
+        const rect = anchorBtn.getBoundingClientRect();
+        const popW = branchPop.offsetWidth, popH = branchPop.offsetHeight, pad = 8;
+        let left = rect.right + window.scrollX - popW;
+        let top = rect.bottom + window.scrollY + 6;
+        left = Math.max(window.scrollX + pad, Math.min(left, window.scrollX + window.innerWidth - popW - pad));
+        top = Math.min(top, window.scrollY + window.innerHeight - popH - pad);
+        branchPop.style.left = `${left}px`;
+        branchPop.style.top = `${top}px`;
+        branchPop.style.visibility = "visible";
 
-    const close = (e) => {
-      if (!branchPop.contains(e.target) && e.target !== anchorBtn) {
-        branchPop.style.display = "none";
-        document.removeEventListener("click", close, true);
-        anchorBtn.classList.remove("is-open");
+        const close = (e) => {
+          if (!branchPop.contains(e.target) && e.target !== anchorBtn) {
+            branchPop.style.display = "none";
+            document.removeEventListener("click", close, true);
+            anchorBtn.classList.remove("is-open");
+          }
+        };
+        setTimeout(() => document.addEventListener("click", close, true), 0);
+
+        branchPop.querySelector("#branchCancel").onclick = () => { branchPop.style.display = "none"; };
+        branchPop.querySelector("#branchApply").onclick = () => {
+          const checks = branchPop.querySelectorAll('input[type="checkbox"]');
+          FilterState.branches.clear();
+          checks.forEach(ch => { if (ch.checked) FilterState.branches.add(ch.value); });
+          branchPop.style.display = "none";
+          applyFilters();
+        };
       }
-    };
-    setTimeout(() => document.addEventListener("click", close, true), 0);
+// ใช้สำหรับสร้าง options ของ Brand / Group ตาม Category ที่เลือก
+function getRowsForCatFilters() {
+  const rows = Array.isArray(fullRows) ? fullRows : [];
 
-    branchPop.querySelector("#branchCancel").onclick = () => { branchPop.style.display = "none"; };
-    branchPop.querySelector("#branchApply").onclick = () => {
-      const checks = branchPop.querySelectorAll('input[type="checkbox"]');
-      FilterState.branches.clear();
-      checks.forEach(ch => { if (ch.checked) FilterState.branches.add(ch.value); });
-      branchPop.style.display = "none";
-      applyFilters();
-    };
+  // ถ้ายังไม่ได้เลือก Category เลย → ใช้ทุกแถวเหมือนเดิม
+  if (!FilterState.skuCat.size) return rows;
+
+  // เลือกเฉพาะแถวที่ Category ตรงกับ FilterState.skuCat
+  return rows.filter(r => {
+    const cat = getSkuCategoryFromSkuNumber(r.skuNumber);
+    return FilterState.skuCat.has(cat);
+  });
+}
+
+      /** ---------- Brand popover (dynamic from fullRows) ---------- **/
+let brandPop = null;
+function openBrandFilter(anchorBtn) {
+  if (!brandPop) {
+    brandPop = document.createElement("div");
+    brandPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+    brandPop.style.minWidth = "220px";
+    document.body.appendChild(brandPop);
   }
 
-  /** ---------- Brand popover (dynamic from fullRows) ---------- **/
-  let brandPop = null;
-  function openBrandFilter(anchorBtn) {
-    if (!brandPop) {
-      brandPop = document.createElement("div");
-      brandPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
-      brandPop.style.minWidth = "220px";
-      document.body.appendChild(brandPop);
-    }
+  // ✅ ดึงแค่ rows ตาม Category ที่เลือกไว้
+  const baseRows = getRowsForCatFilters();
 
-    const options = Array.from(new Set((fullRows || [])
+  const options = Array.from(new Set(
+    (baseRows || [])
       .map(r => (r.brandName ?? "").toString().trim())
-      .filter(s => s.length > 0)))
-      .sort((a,b) => a.localeCompare(b, 'th', {sensitivity:'base'}));
+      .filter(s => s.length > 0)
+  )).sort((a, b) => a.localeCompare(b, "th", { sensitivity: "base" }));
 
-    const selected = new Set(FilterState.brands);
+  const selected = new Set(FilterState.brands);
 
-    brandPop.innerHTML = `
-      <div class="max-h-80 overflow-auto space-y-2">
-        ${ options.length ? options.map(opt => `
-            <label class="flex items-center gap-2">
-              <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
-              <span>${opt}</span>
-            </label>
-          `).join("") : `<div class="text-stone-500">No brands</div>` }
-        <div class="flex justify-end gap-2 pt-2">
-          <button id="brandCancel" class="px-2 py-1 rounded border">Cancel</button>
-          <button id="brandApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
-        </div>
-      </div>
-    `;
-
-    brandPop.style.visibility = "hidden";
-    brandPop.style.display = "block";
-    const rect = anchorBtn.getBoundingClientRect();
-    const popW = brandPop.offsetWidth, popH = brandPop.offsetHeight, pad = 8;
-    let left = rect.right + window.scrollX - popW;
-    let top  = rect.bottom + window.scrollY + 6;
-    left = Math.max(window.scrollX + pad, Math.min(left, window.scrollX + window.innerWidth - popW - pad));
-    top  = Math.min(top,  window.scrollY + window.innerHeight - popH - pad);
-    brandPop.style.left = `${left}px`;
-    brandPop.style.top  = `${top}px`;
-    brandPop.style.visibility = "visible";
-
-    const close = (e) => {
-      if (!brandPop.contains(e.target) && e.target !== anchorBtn) {
-        brandPop.style.display = "none";
-        document.removeEventListener("click", close, true);
-        anchorBtn.classList.remove("is-open");
+  brandPop.innerHTML = `
+    <div class="max-h-80 overflow-auto space-y-2">
+      ${
+        options.length
+          ? options
+              .map(
+                opt => `
+          <label class="flex items-center gap-2">
+            <input type="checkbox" value="${opt}" ${
+                  selected.has(opt) ? "checked" : ""
+                }/>
+            <span>${opt}</span>
+          </label>`
+              )
+              .join("")
+          : `<div class="text-stone-500">No brands</div>`
       }
-    };
-    setTimeout(() => document.addEventListener("click", close, true), 0);
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="brandCancel" class="px-2 py-1 rounded border">Cancel</button>
+        <button id="brandApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
+      </div>
+    </div>
+  `;
 
-    brandPop.querySelector("#brandCancel").onclick = () => { brandPop.style.display = "none"; };
-    brandPop.querySelector("#brandApply").onclick = () => {
-      const checks = brandPop.querySelectorAll('input[type="checkbox"]');
-      FilterState.brands.clear();
-      checks.forEach(ch => { if (ch.checked) FilterState.brands.add(ch.value); });
+  // วางตำแหน่ง + close เหมือนเดิม…
+  brandPop.style.visibility = "hidden";
+  brandPop.style.display = "block";
+  const rect = anchorBtn.getBoundingClientRect();
+  const popW = brandPop.offsetWidth,
+    popH = brandPop.offsetHeight,
+    pad = 8;
+  let left = rect.right + window.scrollX - popW;
+  let top = rect.bottom + window.scrollY + 6;
+  left = Math.max(window.scrollX + pad, Math.min(left, window.scrollX + window.innerWidth - popW - pad));
+  top = Math.min(top, window.scrollY + window.innerHeight - popH - pad);
+  brandPop.style.left = `${left}px`;
+  brandPop.style.top = `${top}px`;
+  brandPop.style.visibility = "visible";
+
+  const close = e => {
+    if (!brandPop.contains(e.target) && e.target !== anchorBtn) {
       brandPop.style.display = "none";
-      applyFilters();
-    };
-  }
+      document.removeEventListener("click", close, true);
+      anchorBtn.classList.remove("is-open");
+    }
+  };
+  setTimeout(() => document.addEventListener("click", close, true), 0);
 
-  /** ---------- Group popover (dynamic) ---------- **/
+  brandPop.querySelector("#brandCancel").onclick = () => {
+    brandPop.style.display = "none";
+  };
+  brandPop.querySelector("#brandApply").onclick = () => {
+    const checks = brandPop.querySelectorAll('input[type="checkbox"]');
+    FilterState.brands.clear();
+    checks.forEach(ch => {
+      if (ch.checked) FilterState.brands.add(ch.value);
+    });
+    brandPop.style.display = "none";
+    applyFilters();
+  };
+}
+
+
+      /** ---------- Group popover (dynamic) ---------- **/
 let groupPop = null;
 function openGroupFilter(anchorBtn) {
   if (!groupPop) {
@@ -787,21 +920,34 @@ function openGroupFilter(anchorBtn) {
     document.body.appendChild(groupPop);
   }
 
-  const options = Array.from(new Set((fullRows || [])
-    .map(r => (r.accGroupName ?? "").toString().trim())
-    .filter(s => s.length > 0)))
-    .sort((a,b) => a.localeCompare(b, 'th', {sensitivity:'base'}));
+  // ✅ ใช้ rows ตาม Category
+  const baseRows = getRowsForCatFilters();
+
+  const options = Array.from(new Set(
+    (baseRows || [])
+      .map(r => (r.accGroupName ?? "").toString().trim())
+      .filter(s => s.length > 0)
+  )).sort((a, b) => a.localeCompare(b, "th", { sensitivity: "base" }));
 
   const selected = new Set(FilterState.groups);
 
   groupPop.innerHTML = `
     <div class="max-h-80 overflow-auto space-y-2">
-      ${ options.length ? options.map(opt => `
+      ${
+        options.length
+          ? options
+              .map(
+                opt => `
           <label class="flex items-center gap-2">
-            <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}/>
+            <input type="checkbox" value="${opt}" ${
+                  selected.has(opt) ? "checked" : ""
+                }/>
             <span>${opt}</span>
-          </label>
-        `).join("") : `<div class="text-stone-500">No groups</div>` }
+          </label>`
+              )
+              .join("")
+          : `<div class="text-stone-500">No groups</div>`
+      }
       <div class="flex justify-end gap-2 pt-2">
         <button id="groupCancel" class="px-2 py-1 rounded border">Cancel</button>
         <button id="groupApply"  class="px-2 py-1 rounded bg-black text-white">Filter</button>
@@ -809,20 +955,21 @@ function openGroupFilter(anchorBtn) {
     </div>
   `;
 
-  // วางตำแหน่ง popover
   groupPop.style.visibility = "hidden";
   groupPop.style.display = "block";
   const rect = anchorBtn.getBoundingClientRect();
-  const popW = groupPop.offsetWidth, popH = groupPop.offsetHeight, pad = 8;
+  const popW = groupPop.offsetWidth,
+    popH = groupPop.offsetHeight,
+    pad = 8;
   let left = rect.right + window.scrollX - popW;
-  let top  = rect.bottom + window.scrollY + 6;
+  let top = rect.bottom + window.scrollY + 6;
   left = Math.max(window.scrollX + pad, Math.min(left, window.scrollX + window.innerWidth - popW - pad));
-  top  = Math.min(top,  window.scrollY + window.innerHeight - popH - pad);
+  top = Math.min(top, window.scrollY + window.innerHeight - popH - pad);
   groupPop.style.left = `${left}px`;
-  groupPop.style.top  = `${top}px`;
+  groupPop.style.top = `${top}px`;
   groupPop.style.visibility = "visible";
 
-  const close = (e) => {
+  const close = e => {
     if (!groupPop.contains(e.target) && e.target !== anchorBtn) {
       groupPop.style.display = "none";
       document.removeEventListener("click", close, true);
@@ -831,15 +978,158 @@ function openGroupFilter(anchorBtn) {
   };
   setTimeout(() => document.addEventListener("click", close, true), 0);
 
-  groupPop.querySelector("#groupCancel").onclick = () => { groupPop.style.display = "none"; };
+  groupPop.querySelector("#groupCancel").onclick = () => {
+    groupPop.style.display = "none";
+  };
   groupPop.querySelector("#groupApply").onclick = () => {
     const checks = groupPop.querySelectorAll('input[type="checkbox"]');
     FilterState.groups.clear();
-    checks.forEach(ch => { if (ch.checked) FilterState.groups.add(ch.value); });
+    checks.forEach(ch => {
+      if (ch.checked) FilterState.groups.add(ch.value);
+    });
     groupPop.style.display = "none";
     applyFilters();
   };
 }
+
+
+      let movingPop = null;
+      function openStockMovingFilter(btn) {
+        if (!movingPop) {
+          movingPop = document.createElement("div");
+          movingPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          movingPop.style.minWidth = "180px";
+          document.body.appendChild(movingPop);
+        }
+
+        const opts = ["Fast moving", "Slow moving"];
+        const selected = new Set(FilterState.stockMoving);
+
+        movingPop.innerHTML = `
+    ${opts.map(opt => `
+      <label class="flex items-center gap-2">
+        <input type="checkbox" value="${opt}" ${selected.has(opt) ? "checked" : ""}>
+        <span>${opt}</span>
+      </label>
+    `).join("")}
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button id="movCancel" class="px-2 py-1 border rounded">Cancel</button>
+      <button id="movApply"  class="px-2 py-1 bg-black text-white rounded">Filter</button>
+    </div>
+  `;
+
+        // set popup position
+        const rect = btn.getBoundingClientRect();
+        movingPop.style.left = rect.right - movingPop.offsetWidth + "px";
+        movingPop.style.top = rect.bottom + 6 + "px";
+        movingPop.style.display = "block";
+
+        movingPop.querySelector("#movCancel").onclick = () => movingPop.style.display = "none";
+        movingPop.querySelector("#movApply").onclick = () => {
+          const checks = movingPop.querySelectorAll("input[type=checkbox]");
+          FilterState.stockMoving.clear();
+          checks.forEach(ch => { if (ch.checked) FilterState.stockMoving.add(ch.value); });
+          movingPop.style.display = "none";
+          applyFilters();
+        };
+      }
+
+      let inactivePop = null;
+      function openInactiveFilter(btn) {
+        if (!inactivePop) {
+          inactivePop = document.createElement("div");
+          inactivePop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          inactivePop.style.minWidth = "160px";
+          document.body.appendChild(inactivePop);
+        }
+
+        const current = FilterState.inactive;
+
+        inactivePop.innerHTML = `
+    <label class="flex items-center gap-2">
+      <input type="radio" name="inactive" value="true"  ${current === true ? "checked" : ""}>
+      <span>✔ Inactive</span>
+    </label>
+
+    <label class="flex items-center gap-2">
+      <input type="radio" name="inactive" value="false" ${current === false ? "checked" : ""}>
+      <span>Not Inactive</span>
+    </label>
+
+    <label class="flex items-center gap-2">
+      <input type="radio" name="inactive" value="null" ${current === null ? "checked" : ""}>
+      <span>All</span>
+    </label>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button id="inactCancel" class="px-2 py-1 border rounded">Cancel</button>
+      <button id="inactApply"  class="px-2 py-1 bg-black text-white rounded">Filter</button>
+    </div>
+  `;
+
+        const rect = btn.getBoundingClientRect();
+        inactivePop.style.left = rect.right - inactivePop.offsetWidth + "px";
+        inactivePop.style.top = rect.bottom + 6 + "px";
+        inactivePop.style.display = "block";
+
+        inactivePop.querySelector("#inactCancel").onclick = () => inactivePop.style.display = "none";
+        inactivePop.querySelector("#inactApply").onclick = () => {
+          const val = inactivePop.querySelector("input[name=inactive]:checked").value;
+          FilterState.inactive = val === "true" ? true : val === "false" ? false : null;
+          inactivePop.style.display = "none";
+          applyFilters();
+        };
+      }
+
+      let deadPop = null;
+      function openDeadFilter(btn) {
+        if (!deadPop) {
+          deadPop = document.createElement("div");
+          deadPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          deadPop.style.minWidth = "160px";
+          document.body.appendChild(deadPop);
+        }
+
+        const current = FilterState.deadStock;
+
+        deadPop.innerHTML = `
+    <label class="flex items-center gap-2">
+      <input type="radio" name="dead" value="true" ${current === true ? "checked" : ""}>
+      <span>✔ DeadStock</span>
+    </label>
+
+    <label class="flex items-center gap-2">
+      <input type="radio" name="dead" value="false" ${current === false ? "checked" : ""}>
+      <span>Not DeadStock</span>
+    </label>
+
+    <label class="flex items-center gap-2">
+      <input type="radio" name="dead" value="null" ${current === null ? "checked" : ""}>
+      <span>All</span>
+    </label>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button id="deadCancel" class="px-2 py-1 border rounded">Cancel</button>
+      <button id="deadApply"  class="px-2 py-1 bg-black text-white rounded">Filter</button>
+    </div>
+  `;
+
+        const rect = btn.getBoundingClientRect();
+        deadPop.style.left = rect.right - deadPop.offsetWidth + "px";
+        deadPop.style.top = rect.bottom + 6 + "px";
+        deadPop.style.display = "block";
+
+        deadPop.querySelector("#deadCancel").onclick = () => deadPop.style.display = "none";
+        deadPop.querySelector("#deadApply").onclick = () => {
+          const val = deadPop.querySelector("input[name=dead]:checked").value;
+          FilterState.deadStock = val === "true" ? true : val === "false" ? false : null;
+          deadPop.style.display = "none";
+          applyFilters();
+        };
+      }
+
+
 
 
 
@@ -913,22 +1203,22 @@ function openGroupFilter(anchorBtn) {
 
       /** ---------- TurnOver popover ---------- **/
       let turnoverPop = null;
-function openTurnoverFilter(anchorBtn) {
-  if (!turnoverPop) {
-    turnoverPop = document.createElement("div");
-    turnoverPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
-    // ✅ กันวูบ: ซ่อนไว้นอกจอตั้งแต่แรก + ไม่ให้คลิกโดน
-    turnoverPop.style.position = "fixed";
-    turnoverPop.style.left = "-9999px";
-    turnoverPop.style.top = "-9999px";
-    turnoverPop.style.opacity = "0";
-    turnoverPop.style.pointerEvents = "none";
-    turnoverPop.style.minWidth = "220px";
-    document.body.appendChild(turnoverPop);
-  }
+      function openTurnoverFilter(anchorBtn) {
+        if (!turnoverPop) {
+          turnoverPop = document.createElement("div");
+          turnoverPop.className = "absolute bg-white border rounded shadow p-3 text-sm z-50";
+          // ✅ กันวูบ: ซ่อนไว้นอกจอตั้งแต่แรก + ไม่ให้คลิกโดน
+          turnoverPop.style.position = "fixed";
+          turnoverPop.style.left = "-9999px";
+          turnoverPop.style.top = "-9999px";
+          turnoverPop.style.opacity = "0";
+          turnoverPop.style.pointerEvents = "none";
+          turnoverPop.style.minWidth = "220px";
+          document.body.appendChild(turnoverPop);
+        }
 
-  const { min, max } = FilterState.turnoverRange || {};
-  turnoverPop.innerHTML = `
+        const { min, max } = FilterState.turnoverRange || {};
+        turnoverPop.innerHTML = `
     <div class="space-y-2">
       <label class="flex items-center gap-2">
         Min: <input type="number" id="toMin" class="border rounded px-1 w-24" value="${min ?? ""}">
@@ -943,72 +1233,72 @@ function openTurnoverFilter(anchorBtn) {
     </div>
   `;
 
-  // ✅ แสดงแบบไม่วูบ: คำนวณตำแหน่งด้วย rect (fixed ไม่ต้องบวก scroll)
-  const rect = anchorBtn.getBoundingClientRect();
-  // ให้ชิดขอบขวาของปุ่ม และอยู่ใต้ปุ่ม 6px
-  const pad = 8;
-  // ชั่วคราวเปิดให้วัดขนาด
-  turnoverPop.style.display = "block";
-  const popW = turnoverPop.offsetWidth;
-  const popH = turnoverPop.offsetHeight;
+        // ✅ แสดงแบบไม่วูบ: คำนวณตำแหน่งด้วย rect (fixed ไม่ต้องบวก scroll)
+        const rect = anchorBtn.getBoundingClientRect();
+        // ให้ชิดขอบขวาของปุ่ม และอยู่ใต้ปุ่ม 6px
+        const pad = 8;
+        // ชั่วคราวเปิดให้วัดขนาด
+        turnoverPop.style.display = "block";
+        const popW = turnoverPop.offsetWidth;
+        const popH = turnoverPop.offsetHeight;
 
-  let left = rect.right - popW;
-  let top  = rect.bottom + 6;
+        let left = rect.right - popW;
+        let top = rect.bottom + 6;
 
-  // กันชนขอบจอ
-  left = Math.max(pad, Math.min(left, window.innerWidth  - popW - pad));
-  top  = Math.max(pad, Math.min(top,  window.innerHeight - popH - pad));
+        // กันชนขอบจอ
+        left = Math.max(pad, Math.min(left, window.innerWidth - popW - pad));
+        top = Math.max(pad, Math.min(top, window.innerHeight - popH - pad));
 
-  turnoverPop.style.left = `${left}px`;
-  turnoverPop.style.top  = `${top}px`;
+        turnoverPop.style.left = `${left}px`;
+        turnoverPop.style.top = `${top}px`;
 
-  // ✅ ค่อยทำให้มองเห็นและคลิกได้ หลังตั้งตำแหน่งเสร็จ
-  requestAnimationFrame(() => {
-    turnoverPop.style.opacity = "1";
-    turnoverPop.style.pointerEvents = "auto";
-  });
+        // ✅ ค่อยทำให้มองเห็นและคลิกได้ หลังตั้งตำแหน่งเสร็จ
+        requestAnimationFrame(() => {
+          turnoverPop.style.opacity = "1";
+          turnoverPop.style.pointerEvents = "auto";
+        });
 
-  const close = (e) => {
-    if (!turnoverPop.contains(e.target) && e.target !== anchorBtn) {
-      // ซ่อนกลับแบบไม่วูบ
-      turnoverPop.style.opacity = "0";
-      turnoverPop.style.pointerEvents = "none";
-      turnoverPop.style.left = "-9999px";
-      turnoverPop.style.top  = "-9999px";
-      document.removeEventListener("click", close, true);
-    }
-  };
-  setTimeout(() => document.addEventListener("click", close, true), 0);
+        const close = (e) => {
+          if (!turnoverPop.contains(e.target) && e.target !== anchorBtn) {
+            // ซ่อนกลับแบบไม่วูบ
+            turnoverPop.style.opacity = "0";
+            turnoverPop.style.pointerEvents = "none";
+            turnoverPop.style.left = "-9999px";
+            turnoverPop.style.top = "-9999px";
+            document.removeEventListener("click", close, true);
+          }
+        };
+        setTimeout(() => document.addEventListener("click", close, true), 0);
 
-  ['toMin','toMax'].forEach(id => {
-    const el = turnoverPop.querySelector(`#${id}`);
-    el.addEventListener('keydown', (e) => { if (e.key === 'Enter') turnoverPop.querySelector('#toApply').click(); });
-  });
+        ['toMin', 'toMax'].forEach(id => {
+          const el = turnoverPop.querySelector(`#${id}`);
+          el.addEventListener('keydown', (e) => { if (e.key === 'Enter') turnoverPop.querySelector('#toApply').click(); });
+        });
 
-  turnoverPop.querySelector("#toCancel").onclick = () => {
-    // กดยกเลิกก็ซ่อนแบบไม่วูบ
-    turnoverPop.style.opacity = "0";
-    turnoverPop.style.pointerEvents = "none";
-    turnoverPop.style.left = "-9999px";
-    turnoverPop.style.top  = "-9999px";
-  };
-  turnoverPop.querySelector("#toApply").onclick = () => {
-    let vmin = parseFloat(document.getElementById("toMin").value);
-    let vmax = parseFloat(document.getElementById("toMax").value);
-    vmin = Number.isFinite(vmin) ? vmin : null;
-    vmax = Number.isFinite(vmax) ? vmax : null;
-    if (vmin !== null && vmax !== null && vmin > vmax) [vmin, vmax] = [vmax, vmin];
-    FilterState.turnoverRange = { min: vmin, max: vmax };
+        turnoverPop.querySelector("#toCancel").onclick = () => {
+          // กดยกเลิกก็ซ่อนแบบไม่วูบ
+          turnoverPop.style.opacity = "0";
+          turnoverPop.style.pointerEvents = "none";
+          turnoverPop.style.left = "-9999px";
+          turnoverPop.style.top = "-9999px";
+        };
+        turnoverPop.querySelector("#toApply").onclick = () => {
+          let vmin = parseFloat(document.getElementById("toMin").value);
+          let vmax = parseFloat(document.getElementById("toMax").value);
+          vmin = Number.isFinite(vmin) ? vmin : null;
+          vmax = Number.isFinite(vmax) ? vmax : null;
+          if (vmin !== null && vmax !== null && vmin > vmax) [vmin, vmax] = [vmax, vmin];
+          FilterState.turnoverRange = { min: vmin, max: vmax };
 
-    // ซ่อนหลัง apply
-    turnoverPop.style.opacity = "0";
-    turnoverPop.style.pointerEvents = "none";
-    turnoverPop.style.left = "-9999px";
-    turnoverPop.style.top  = "-9999px";
+          // ซ่อนหลัง apply
+          turnoverPop.style.opacity = "0";
+          turnoverPop.style.pointerEvents = "none";
+          turnoverPop.style.left = "-9999px";
+          turnoverPop.style.top = "-9999px";
 
-    applyFilters();
-  };
-}
+          applyFilters();
+        };
+      }
 
       /** ---------- BIND ปุ่มกรองบนหัวตาราง ---------- **/
       function initHeaderFilters() {
@@ -1047,25 +1337,53 @@ function openTurnoverFilter(anchorBtn) {
             openTurnoverFilter(toBtn);
           });
         }
+        // Stock Moving
+        const movBtn = document.querySelector('.filter-btn-moving');
+        if (movBtn) {
+          movBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            openStockMovingFilter(movBtn);
+          });
+        }
+
+        // Inactive
+        const inactBtn = document.querySelector('.filter-btn-inactive');
+        if (inactBtn) {
+          inactBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            openInactiveFilter(inactBtn);
+          });
+        }
+
+        // DeadStock
+        const deadBtn = document.querySelector('.filter-btn-dead');
+        if (deadBtn) {
+          deadBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            openDeadFilter(deadBtn);
+          });
+        }
+
       }
 
+//*****************************//
       // Brand
-const brandBtn = document.querySelector('th[data-sort-key="brandName"] .filter-btn-brand');
-if (brandBtn) {
-  brandBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openBrandFilter(brandBtn);
-  });
-}
+      const brandBtn = document.querySelector('th[data-sort-key="brandName"] .filter-btn-brand');
+      if (brandBtn) {
+        brandBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openBrandFilter(brandBtn);
+        });
+      }
 
-// Group
-const groupBtn = document.querySelector('th[data-sort-key="accGroupName"] .filter-btn-group');
-if (groupBtn) {
-  groupBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openGroupFilter(groupBtn);
-  });
-}
+      // Group
+      const groupBtn = document.querySelector('th[data-sort-key="accGroupName"] .filter-btn-group');
+      if (groupBtn) {
+        groupBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openGroupFilter(groupBtn);
+        });
+      }
 
 
       // เรียกเมื่อโหลดข้อมูลเสร็จครั้งแรก
@@ -1095,16 +1413,19 @@ if (groupBtn) {
           return Number.isFinite(d.getTime()) ? d : null;
         }
 
-        btnApply?.addEventListener("click", () => {
-          FilterState.singleDate = parseDateInput(sd);
-          applyFilters();
-        });
+btnApply?.addEventListener("click", () => {
+  FilterState.singleDate = parseDateInput(sd);
+  // applyFilters();
+  loadStockStatus();
+});
 
-        btnReset?.addEventListener("click", () => {
-          if (sd) sd.value = "";
-          FilterState.singleDate = null;
-          applyFilters();
-        });
+
+btnReset?.addEventListener("click", () => {
+  if (sd) sd.value = "";
+  FilterState.singleDate = null;
+  loadStockStatus();
+});
+
 
         sd?.addEventListener("keydown", (e) => {
           if (e.key === "Enter") btnApply?.click();
@@ -1112,101 +1433,121 @@ if (groupBtn) {
       });
     </script>
 
-<script>
-  let avgSalesPopover = null;
-  let avgPopAnchor = null;
-  let avgPopUnbinds = [];
+    <script>
+      let avgSalesPopover = null;
+      let avgPopAnchor = null;
+      let avgPopUnbinds = [];
 
-  function closeAvgPopover() {
-    if (!avgSalesPopover) return;
-    avgSalesPopover.style.display = "none";
-    avgPopAnchor = null;
-    avgPopUnbinds.forEach(off => { try{ off(); }catch{} });
-    avgPopUnbinds = [];
-  }
+      function closeAvgPopover() {
+        if (!avgSalesPopover) return;
+        avgSalesPopover.style.display = "none";
+        avgPopAnchor = null;
+        avgPopUnbinds.forEach(off => { try { off(); } catch { } });
+        avgPopUnbinds = [];
+      }
 
-  function openAvgSalesPopover(anchorBtn, row) {
-    const salesArr = Array.isArray(row?.sales6) ? row.sales6 : [];
-    if (!avgSalesPopover) {
-      avgSalesPopover = document.createElement("div");
-      avgSalesPopover.className = "fixed bg-white border rounded shadow p-3 text-sm z-50";
-      avgSalesPopover.style.minWidth = "260px";
-      avgSalesPopover.style.maxHeight = "60vh";
-      avgSalesPopover.style.overflow = "auto";
-      document.body.appendChild(avgSalesPopover);
-    }
+      function openAvgSalesPopover(anchorBtn, row) {
+        const salesArr = Array.isArray(row?.sales6) ? row.sales6 : [];
+        if (!avgSalesPopover) {
+          avgSalesPopover = document.createElement("div");
+          avgSalesPopover.className = "fixed bg-white border rounded shadow p-3 text-sm z-50";
+          avgSalesPopover.style.minWidth = "260px";
+          avgSalesPopover.style.maxHeight = "60vh";
+          avgSalesPopover.style.overflow = "auto";
+          document.body.appendChild(avgSalesPopover);
+        }
+        const maxQty = Math.max(0, ...salesArr.map(x => Number(x.qty || 0)));
+        const rowsHtml = (salesArr || []).map(x => {
+          const q = Number(x.qty || 0);
+          const isMax = (q === maxQty) && maxQty > 0;
 
-    const rowsHtml = (salesArr||[]).map(x => `
-      <tr><td class="pr-4 py-0.5 text-stone-600 whitespace-nowrap">${x.month}</td>
-          <td class="text-right font-medium">${Number(x.qty||0)}</td></tr>`).join("");
-
-    const sum = (salesArr||[]).reduce((a,b)=>a+(Number(b.qty)||0),0);
-    const avg = salesArr.length ? Math.ceil(sum/salesArr.length) : 0;
-
-    avgSalesPopover.innerHTML = `
-      <div class="mb-2 font-semibold">ยอดขายย้อนหลัง 6 เดือน</div>
-      <div class="text-xs text-stone-600 mb-2">SKU: <span class="font-medium">${row?.skuNumber??""}</span></div>
-      <table class="w-full"><tbody>${rowsHtml||`<tr><td class="text-stone-500">No data</td></tr>`}</tbody>
-      ${rowsHtml?`<tfoot>
-        <tr><td class="pt-2 text-stone-600">รวม</td><td class="pt-2 text-right">${sum}</td></tr>
-        <tr><td class="text-stone-600">เฉลี่ย</td><td class="text-right">${avg}</td></tr>
-      </tfoot>`:""}</table>
-      <div class="mt-3 text-right"><button id="avgSalesClose" class="px-2 py-1 rounded border">Close</button></div>
+          return `
+      <tr>
+        <td class="pr-4 py-1 text-stone-600 whitespace-nowrap">
+          ${x.month}${isMax ? ' <span class="text-red-600 font-semibold">(Max)</span>' : ''}
+        </td>
+        <td class="text-right font-semibold">
+          <span class="${isMax ? 'text-red-600 font-extrabold' : ''}">
+            ${q}
+          </span>
+        </td>
+      </tr>
     `;
+        }).join("");
+        // const sum = (salesArr||[]).reduce((a,b)=>a+(Number(b.qty)||0),0);
+        // const avg = salesArr.length ? Math.ceil(sum/salesArr.length) : 0;
 
-    // วางครั้งแรกใต้ปุ่ม แล้ว "ปิด" เมื่อมีการเลื่อน
-    const rect = anchorBtn.getBoundingClientRect();
-    const pad  = 8;
-    const left = Math.max(pad, Math.min(rect.left, window.innerWidth - (avgSalesPopover.offsetWidth||260) - pad));
-    const top  = Math.min(rect.bottom + 6, window.innerHeight - (avgSalesPopover.offsetHeight||200) - pad);
+        avgSalesPopover.innerHTML = `
+  <div class="mb-2 font-semibold">ยอดขายย้อนหลัง 6 เดือน</div>
+  <div class="text-xs text-stone-600 mb-2">
+    SKU: <span class="font-medium">${row?.skuNumber ?? ""}</span>
+  </div>
+  <table class="w-full">
+    <tbody>
+      ${rowsHtml || `<tr><td class="text-stone-500">No data</td></tr>`}
+    </tbody>
+  </table>
+  <div class="mt-3 text-right">
+    <button id="avgSalesClose" class="px-2 py-1 rounded border">Close</button>
+  </div>
+`;
 
-    avgSalesPopover.style.left = `${left}px`;
-    avgSalesPopover.style.top  = `${top}px`;
-    avgSalesPopover.style.display = "block";
-    avgPopAnchor = anchorBtn;
 
-    // ปิดเมื่อคลิกนอก
-    const onDocClick = (e) => {
-      if (!avgSalesPopover.contains(e.target) && e.target !== anchorBtn) closeAvgPopover();
-    };
-    document.addEventListener("click", onDocClick, true);
-    avgPopUnbinds.push(() => document.removeEventListener("click", onDocClick, true));
+        // วางครั้งแรกใต้ปุ่ม แล้ว "ปิด" เมื่อมีการเลื่อน
+        const rect = anchorBtn.getBoundingClientRect();
+        const pad = 8;
+        const left = Math.max(pad, Math.min(rect.left, window.innerWidth - (avgSalesPopover.offsetWidth || 260) - pad));
+        const top = Math.min(rect.bottom + 6, window.innerHeight - (avgSalesPopover.offsetHeight || 200) - pad);
 
-    // ✅ ปิดเมื่อ scroll / resize
-    const onScroll = () => closeAvgPopover();
-    const onResize = () => closeAvgPopover();
-    window.addEventListener("scroll", onScroll, { passive:true });
-    window.addEventListener("resize", onResize);
-    avgPopUnbinds.push(() => window.removeEventListener("scroll", onScroll));
-    avgPopUnbinds.push(() => window.removeEventListener("resize", onResize));
+        avgSalesPopover.style.left = `${left}px`;
+        avgSalesPopover.style.top = `${top}px`;
+        avgSalesPopover.style.display = "block";
+        avgPopAnchor = anchorBtn;
 
-    // ✅ ปิดเมื่อเลื่อนภายในคอนเทนเนอร์ตาราง
-    const scrollHost = document.querySelector("section.overflow-auto, section.max-h\\[58vh\\].overflow-auto") || tableBody?.parentElement;
-    if (scrollHost) {
-      scrollHost.addEventListener("scroll", onScroll, { passive:true });
-      avgPopUnbinds.push(() => scrollHost.removeEventListener("scroll", onScroll));
-    }
+        // ปิดเมื่อคลิกนอก
+        const onDocClick = (e) => {
+          if (!avgSalesPopover.contains(e.target) && e.target !== anchorBtn) closeAvgPopover();
+        };
+        document.addEventListener("click", onDocClick, true);
+        avgPopUnbinds.push(() => document.removeEventListener("click", onDocClick, true));
 
-    // ✅ ปิดด้วย Esc
-    const onKey = (e) => { if (e.key === "Escape") closeAvgPopover(); };
-    document.addEventListener("keydown", onKey, true);
-    avgPopUnbinds.push(() => document.removeEventListener("keydown", onKey, true));
+        // ✅ ปิดเมื่อ scroll / resize
+        const onScroll = () => closeAvgPopover();
+        const onResize = () => closeAvgPopover();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onResize);
+        avgPopUnbinds.push(() => window.removeEventListener("scroll", onScroll));
+        avgPopUnbinds.push(() => window.removeEventListener("resize", onResize));
 
-    avgSalesPopover.querySelector("#avgSalesClose").onclick = closeAvgPopover;
-  }
+        // ✅ ปิดเมื่อเลื่อนภายในคอนเทนเนอร์ตาราง
+        const scrollHost = document.querySelector("section.overflow-auto, section.max-h\\[58vh\\].overflow-auto") || tableBody?.parentElement;
+        if (scrollHost) {
+          scrollHost.addEventListener("scroll", onScroll, { passive: true });
+          avgPopUnbinds.push(() => scrollHost.removeEventListener("scroll", onScroll));
+        }
 
-  // จับคลิกที่ Average Demand (ปุ่ม .avg-pop)
-  tableBody.addEventListener("click", (e) => {
-    const btn = e.target.closest(".avg-pop");
-    if (!btn) return;
-    const idx = Number(btn.dataset.idx);
-    const row = filtered[idx];
-    if (!row || !Array.isArray(row.sales6)) return;
-    // toggle
-    if (avgSalesPopover?.style.display === "block" && btn === avgPopAnchor) { closeAvgPopover(); return; }
-    openAvgSalesPopover(btn, row);
-  });
-</script>
+        // ✅ ปิดด้วย Esc
+        const onKey = (e) => { if (e.key === "Escape") closeAvgPopover(); };
+        document.addEventListener("keydown", onKey, true);
+        avgPopUnbinds.push(() => document.removeEventListener("keydown", onKey, true));
+
+        avgSalesPopover.querySelector("#avgSalesClose").onclick = closeAvgPopover;
+
+
+      }
+
+      // จับคลิกที่ Average Demand (ปุ่ม .avg-pop)
+      tableBody.addEventListener("click", (e) => {
+        const btn = e.target.closest(".avg-pop");
+        if (!btn) return;
+        const idx = Number(btn.dataset.idx);
+        const row = filtered[idx];
+        if (!row || !Array.isArray(row.sales6)) return;
+        // toggle
+        if (avgSalesPopover?.style.display === "block" && btn === avgPopAnchor) { closeAvgPopover(); return; }
+        openAvgSalesPopover(btn, row);
+      });
+    </script>
 
 
 
@@ -1231,4 +1572,6 @@ if (groupBtn) {
     </footer>
   </main>
 </body>
+
 </html>
+
