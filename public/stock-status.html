@@ -10,6 +10,14 @@
 </head>
 
 <body class="min-h-screen bg-white">
+
+  <div id="loadingOverlay"
+  class="fixed inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-[9999] hidden">
+  <div class="animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent"></div>
+  <div class="mt-3 text-sm text-black font-medium">กำลังโหลดข้อมูล...</div>
+</div>
+
+
   <!-- Top Bar -->
   <header class="w-full h-16 bg-stone-900 flex items-center px-4">
     <div class="flex items-center gap-6">
@@ -29,7 +37,7 @@
   <main class="mx-auto max-w-none px-4">
     <!-- Title -->
     <div class="mt-8">
-      <h1 class="text-3xl font-bold text-black">STOCK STATUS - AP </h1>
+      <h1 class="text-3xl font-bold text-black">STOCK STATUS - AP Item</h1>
     </div>
 
     <!-- Filters / Search Bar -->
@@ -44,7 +52,7 @@
           <input id="singleDate" type="date"
             class="h-9 min-w-[160px] rounded border border-zinc-400 px-2 text-sm bg-white" />
           <button id="dateApply" class="h-9 px-3 rounded bg-black text-white text-xs">Apply</button>
-          <button id="dateReset" class="h-9 px-3 rounded border text-xs">Reset</button>
+          <button id="dateReset" class="h-9 px-3 rounded border text-xs">Reset Date</button>
         </div>
 
         <!-- Filter chips host -->
@@ -57,6 +65,8 @@
         </div>
       </div>
     </section>
+
+    
 
     <!-- Table -->
     <section class="mt-6 max-h-[58vh] overflow-auto">
@@ -100,7 +110,7 @@
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="onHandQty">
-              OnHand-QTY
+              OH-QTY
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="backlog">
@@ -108,7 +118,7 @@
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="averageDemand">
-              Average Demand
+              AVG Demand
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="turnOver">
@@ -123,7 +133,7 @@
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="safetyStock">
-              safetyStock
+              SS
               <button type="button" class="sort-btn" aria-label="sort"><span class="chev">↑↓</span></button>
             </th>
             <th class="px-3 py-2 border" data-sort-key="min">
@@ -143,7 +153,7 @@
               </button>
             </th> -->
             <th class="px-3 py-2 border" data-sort-key="deadStock">
-              DeadStock
+              Dead Stock
               <button type="button" class="filter-btn-dead icon-btn ml-1" aria-label="filter dead">
                 <img src="img/filter.png" class="h-3 w-3 opacity-70 hover:opacity-100">
               </button>
@@ -167,6 +177,7 @@
       const searchInput = document.getElementById("searchInput");
 
       let fullRows = [];
+      let baseFiltered = [];
       let filtered = [];
 
       // === state ของการ sort ===
@@ -175,7 +186,17 @@
 
       let _didResetFiltersOnce = false;
 
+      function showLoading() {
+  document.getElementById("loadingOverlay").classList.remove("hidden");
+}
+
+function hideLoading() {
+  document.getElementById("loadingOverlay").classList.add("hidden");
+}
+
+
       async function loadStockStatus() {
+        showLoading();
         try {
           // รีเซ็ตฟิลเตอร์ครั้งเดียวตอนเปิดหน้า (กันฟิลเตอร์ค้าง)
           if (!_didResetFiltersOnce) {
@@ -209,12 +230,14 @@
             || FilterState.singleDate) {
             applyFilters();
           } else {
+            baseFiltered = fullRows.slice();
             filtered = fullRows.slice();
             page = 1;  // เริ่มหน้าแรก
             render();
           }
 
           updateSortIcons();
+          hideLoading();
         } catch (err) {
           console.error("Failed to load /api/stock-status", err);
           if (tableBody) {
@@ -241,12 +264,22 @@
           const key = th.dataset.sortKey;
 
           if (currentSortBy === key) {
-            currentOrder = (currentOrder === "asc") ? "desc" : "asc";
-          } else {
-            currentSortBy = key;
-            currentOrder = "asc";
-          }
-          loadStockStatus();
+  currentOrder = (currentOrder === "asc") ? "desc" : "asc";
+} else {
+  currentSortBy = key;
+  currentOrder = "asc";
+}
+
+showLoading();  // ← แสดง overlay เหมือนเดิม
+
+setTimeout(() => {
+  sortFilteredRows();
+  render();
+  updateSortIcons();
+  hideLoading();   // ← ซ่อน overlay หลัง render เสร็จ
+}, 180);  // delay 180ms เพื่อให้ตาเห็น overlay
+
+
         });
       }
 
@@ -283,6 +316,31 @@
         const start = (page - 1) * pageSize;
         return filtered.slice(start, start + pageSize);
       }
+
+      function sortFilteredRows() {
+  filtered.sort((a, b) => {
+    const key = currentSortBy;
+    let va = a[key];
+    let vb = b[key];
+
+    // แปลงตัวเลขถ้าจำเป็น
+    const na = Number(va);
+    const nb = Number(vb);
+    if (!isNaN(na) && !isNaN(nb)) {
+      va = na;
+      vb = nb;
+    } else {
+      // แปลง string ให้เปรียบเทียบไทยได้ถูกต้อง
+      va = (va ?? "").toString().trim();
+      vb = (vb ?? "").toString().trim();
+    }
+
+    if (va < vb) return currentOrder === "asc" ? -1 : 1;
+    if (va > vb) return currentOrder === "asc" ? 1 : -1;
+    return 0;
+  });
+}
+
 
       function render() {
         if (!tableBody) return;
@@ -367,21 +425,30 @@
         bindPagerButtons();
       }
 
-      // ค้นหา (client)
+            // ค้นหา (client) → ทำงานต่อจาก Filter (baseFiltered)
       if (searchInput) {
         searchInput.addEventListener("input", (e) => {
           const q = e.target.value.trim().toLowerCase();
-          filtered = fullRows.filter(r =>
-            (r.branchCode || "").toLowerCase().includes(q) ||
-            (r.skuNumber || "").toLowerCase().includes(q) ||
-            (r.productName || "").toLowerCase().includes(q) ||
-            (r.brandName || "").toLowerCase().includes(q) ||
-            (r.accGroupName || "").toLowerCase().includes(q)
-          );
+
+          if (!q) {
+            // ไม่มีคำค้น → แสดงผลตาม Filter อย่างเดียว
+            filtered = baseFiltered.slice();
+          } else {
+            // มีคำค้น → ค้นต่อจากผล Filter
+            filtered = baseFiltered.filter(r =>
+              (r.branchCode || "").toLowerCase().includes(q) ||
+              (r.skuNumber || "").toLowerCase().includes(q) ||
+              (r.productName || "").toLowerCase().includes(q) ||
+              (r.brandName || "").toLowerCase().includes(q) ||
+              (r.accGroupName || "").toLowerCase().includes(q)
+            );
+          }
+
           page = 1;
           render();
         });
       }
+
 
       // ผูก sort และโหลดครั้งแรกเมื่อ DOM พร้อม
       document.addEventListener("DOMContentLoaded", () => {
@@ -514,9 +581,10 @@
         return { type: null, date: null, ym: null };
       }
 
-      /** ---------- APPLY FILTER ---------- **/
+          /** ---------- APPLY FILTER ---------- **/
       function applyFilters() {
-        filtered = fullRows.filter(r => {
+        // 1) กรองตามเงื่อนไขทั้งหมด → baseFiltered
+        baseFiltered = fullRows.filter(r => {
           // Status
           if (FilterState.status.size > 0 && !FilterState.status.has(String(r.status || "").trim())) return false;
 
@@ -547,20 +615,17 @@
             if (r.isDeadStock !== FilterState.deadStock) return false;
           }
 
-
           // Brand (dynamic)
           if (FilterState.brands.size > 0) {
             const bn = (r.brandName ?? "").toString().trim();
             if (!FilterState.brands.has(bn)) return false;
           }
 
-
           // Group (dynamic)
           if (FilterState.groups.size > 0) {
             const gn = (r.accGroupName ?? "").toString().trim();
             if (!FilterState.groups.has(gn)) return false;
           }
-
 
           // TurnOver range
           const { min, max } = FilterState.turnoverRange || {};
@@ -584,7 +649,7 @@
               if (!sameDay) return false;
             } else if (rd.type === 'month') {
               // ถ้าแถวเป็นระดับเดือน ให้ผ่านเมื่อเดือน-ปีตรงกับวันเลือก
-              const ymSel = `${FilterState.singleDate.getFullYear()}-${String(FilterState.singleDate.getMonth()).padStart(2, '0')}`;
+              const ymSel = `${FilterState.singleDate.getFullYear()}-${String(FilterState.singleDate.getMonth() + 1).padStart(2, '0')}`;
               if (rd.ym !== ymSel) return false;
             }
           }
@@ -592,10 +657,25 @@
           return true;
         });
 
+        // 2) ถ้ามีคำค้นในช่อง Search ให้ใช้ต่อจาก filter
+        const q = (searchInput?.value || "").trim().toLowerCase();
+        if (q) {
+          filtered = baseFiltered.filter(r =>
+            (r.branchCode || "").toLowerCase().includes(q) ||
+            (r.skuNumber || "").toLowerCase().includes(q) ||
+            (r.productName || "").toLowerCase().includes(q) ||
+            (r.brandName || "").toLowerCase().includes(q) ||
+            (r.accGroupName || "").toLowerCase().includes(q)
+          );
+        } else {
+          filtered = baseFiltered.slice();
+        }
+
         page = 1;
         render();
         renderFilterChips();
       }
+
 
       /** ---------- CHIPS (บนแถบ Filters) ---------- **/
       function renderFilterChips() {
