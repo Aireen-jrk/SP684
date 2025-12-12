@@ -94,7 +94,7 @@ try {
 const seq9 = sales9.map(x => x.qty);
   // --- Average Demand ตาม business rule ---
   const totalMonths = 6;
-  const threshold = (totalMonths * 3) / 4; // 3/4 ของ 6 = 4.5
+  const threshold = Math.floor((totalMonths * 3) / 4); 
 
   // const totalMonths = AVG_DEMAND_CONFIG.TOTAL_MONTHS;
   // const threshold =
