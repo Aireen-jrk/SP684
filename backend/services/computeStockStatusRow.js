@@ -164,7 +164,7 @@ const trend = computeLinearTrend(seq6);
   const hasSalesLast6 = seq6.some((v) => v > 0);
   // const hasSalesLast9 = seq9.some((v) => v > 0);
 
-    const isDeadStock = f === 0;
+    const isDeadStock = ด === 0;
   // const isDeadStock = !hasSalesLast9;
   const isInactive = !hasSalesLast6 && f <= 2;
   // const isInactive = !isDeadStock && cntNonZero === 0;
