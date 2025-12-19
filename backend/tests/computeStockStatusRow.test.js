@@ -35,7 +35,7 @@ describe("computeStockStatusRow – using real frontend data structure", () => {
   // -------------------------------------------------------------------
   test("Case 2: ขาย 4 เดือน → (sum/4)*0.75", () => {
     const row = computeStockStatusRow({
-      sales6: makeSales6([0,5,5,5,5,0]),
+      sales6: makeSales6([10,38,44,16,0,0]),
       demandJson: "[]",
       cntNonZero: 4,
       LT_PO: 10, LT_SP: 5, LT_DC: 5,
@@ -44,7 +44,7 @@ describe("computeStockStatusRow – using real frontend data structure", () => {
     });
 
     // sum = 20 → avgRaw = (20/4)*0.75 = 3.75 → ceil → 4
-    expect(row.averageDemand).toBe(5);
+    expect(row.averageDemand).toBe(27);
   });
 
   // -------------------------------------------------------------------
@@ -52,7 +52,7 @@ describe("computeStockStatusRow – using real frontend data structure", () => {
   // -------------------------------------------------------------------
   test("Case 3: ขาย < 3/4 แต่มีขายในสองเดือนล่าสุด → new item", () => {
     const row = computeStockStatusRow({
-      sales6: makeSales6([0,0,0,0,0,4]),
+      sales6: makeSales6([0,4,4,4,0,4]),
       demandJson: "[]",
       cntNonZero: 1,
       LT_PO: 10, LT_SP: 5, LT_DC: 5,
@@ -70,7 +70,7 @@ describe("computeStockStatusRow – using real frontend data structure", () => {
   // -------------------------------------------------------------------
   test("Case 4: สองเดือนล่าสุดไม่ขายเลย → avg = 0", () => {
     const row = computeStockStatusRow({
-      sales6: makeSales6([5,5,0,0,0,0]),
+      sales6: makeSales6([10,38,44,16,0,0]),
       demandJson: "[]",
       cntNonZero: 2,
       LT_PO: 10, LT_SP: 5, LT_DC: 5,
@@ -111,7 +111,7 @@ describe("computeStockStatusRow – using real frontend data structure", () => {
   // -------------------------------------------------------------------
   test("trend calculation", () => {
     const row = computeStockStatusRow({
-      sales6: makeSales6([0,2,4,8,8,16]),
+      sales6: makeSales6([4,14,9,11,0,0]),
       demandJson:"[]",
       cntNonZero: 5,
       LT_PO: 0, LT_SP: 0, LT_DC: 0,
@@ -119,7 +119,7 @@ describe("computeStockStatusRow – using real frontend data structure", () => {
       Item_Group: "",
     });
 
-    expect(row.trend).toBe(1.75);
+    expect(row.trend).toBe(1.34);
   });
 
   // -------------------------------------------------------------------

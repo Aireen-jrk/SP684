@@ -13,7 +13,7 @@ import { determineStatus } from "./StatusService.js";
  * @returns {object} - object ที่ส่งไปให้ frontend
  */
 export function computeStockStatusRow(r) {
-  const f = Number(r.cntNonZero ?? r.freq6 ?? 0);
+  const f = Number(r.cntNonZero ?? 0);
 
   // --- Service level ตามความถี่การขาย ---
   let serviceLevel;
@@ -35,66 +35,24 @@ export function computeStockStatusRow(r) {
   const zRaw = jstatPkg.jStat.normal.inv(serviceLevel, 0, 1);
   const z = Math.round(zRaw * 100) / 100;
 
-// อ่านยอดขาย 6 เดือนย้อนหลังจาก SQL
-// --- FIX: parse sales6 correctly ---
-let sales6Raw = r.sales6;
-
-if (!sales6Raw || sales6Raw === "" || sales6Raw === null) {
-  sales6Raw = "[]";  // fallback
-}
-
-// --- FIX: รองรับทั้ง string JSON และ array object ---
-let sales6 = [];
-
-if (Array.isArray(r.sales6)) {
-  // กรณี SQL ส่ง array object มา
-  sales6 = r.sales6.map(x => ({
-    month: x.month,
-    qty: Number(x.qty || 0)
-  }));
-} else {
-  // กรณี SQL ส่ง string JSON
-  try {
-    const parsed = JSON.parse(r.sales6 || "[]");
-    if (Array.isArray(parsed)) {
-      sales6 = parsed.map(x => ({
-        month: x.month,
-        qty: Number(x.qty || 0)
-      }));
-    }
-  } catch {
-    sales6 = [];
-  }
-}
-
-const seq6 = sales6.map(x => x.qty);
-// ------------------------
 // DEMAND JSON (9 เดือน)
-// ------------------------
-let sales9 = [];
+const sales9Raw = JSON.parse(r.demandJson || "[]");
+const seq9 = sales9Raw.map(x => Number(x.qty || 0));
 
-try {
-  let arr = r.demandJson;
+// 6 เดือน
+const sales6Raw = JSON.parse(r.sales6 || "[]");
 
-  // SQL ส่ง string JSON
-  if (typeof arr === "string") {
-    arr = JSON.parse(arr);
-  }
+// สำหรับแสดง popup (มี month + qty)
+const sales6ForView = sales6Raw;
 
-  if (Array.isArray(arr)) {
-    sales9 = arr.map(x => ({
-      month: x.monthEnd ?? x.month ?? null,
-      qty: Number(x.demandQty ?? x.qty ?? 0),
-    }));
-  }
-} catch (e) {
-  sales9 = [];
-}
+// สำหรับคำนวณ (ตัวเลขล้วน)
+const seq6 = sales6Raw.map(x => Number(x.qty || 0));
 
-const seq9 = sales9.map(x => x.qty);
+
+
   // --- Average Demand ตาม business rule ---
   const totalMonths = 6;
-  const threshold = (totalMonths * 3) / 4; // 3/4 ของ 6 = 4.5
+  const threshold = Math.floor((totalMonths * 3) / 4); // 3/4 ของ 6 = 4.5 = 4 (เดือน 4-5เดือน)
 
   // const totalMonths = AVG_DEMAND_CONFIG.TOTAL_MONTHS;
   // const threshold =
@@ -118,7 +76,7 @@ const seq9 = sales9.map(x => x.qty);
     avgRaw = totalSales / totalMonths;
   } else if (
     monthsWithSales < totalMonths &&
-    monthsWithSales >= threshold // ไม่น้อยกว่า 3/4 ของ 6 เดือน
+    monthsWithSales >= threshold // ไม่น้อยกว่า 3/4 ของ 6 (เดือน 4-5เดือน)
   ) {
     // กรณีที่ 2
     avgRaw = (totalSales / monthsWithSales) * (3 / 4);
@@ -154,19 +112,34 @@ const seq9 = sales9.map(x => x.qty);
   }
   const stdevInt = Math.round(stdevRaw);
 
-  // --- trend: ใช้ 6 เดือนสุดท้าย ---
-  let sumRat = 0,
-    cntRat = 0;
-  for (let i = 1; i < seq6.length; i++) {
-    const prev = seq6[i - 1];
-    const curr = seq6[i];
-    if (prev > 0) {
-      sumRat += curr / prev;
-      cntRat++;
-    }
+function computeLinearTrend(seq6) {
+  const n = seq6.length;
+
+  let sumX = 0;
+  let sumY = 0;
+  let sumXY = 0;
+  let sumX2 = 0;
+
+  for (let i = 0; i < n; i++) {
+    const x = i + 1;              // เดือน 1..6
+    const y = Number(seq6[i] ?? 0);
+
+    sumX += x;
+    sumY += y;
+    sumXY += x * y;
+    sumX2 += x * x;
   }
-  const growthAvg = cntRat > 0 ? sumRat / cntRat : 0;
-  const trend = Math.round(growthAvg * 100) / 100;
+
+  const denominator = n * sumX2 - sumX * sumX;
+  if (denominator === 0) return 0;
+
+  const b =
+    (n * sumXY - sumX * sumY) / denominator;
+
+  return Math.round(b * 100) / 100; // ปัดทศนิยม 2 ตำแหน่ง
+}
+
+const trend = computeLinearTrend(seq6);
 
   // --- Safety Stock & Min/ROP ---
   const ltDays = Math.max(
@@ -189,10 +162,12 @@ const seq9 = sales9.map(x => x.qty);
 
   // ====== DeadStock / Inactive ======
   const hasSalesLast6 = seq6.some((v) => v > 0);
-  const hasSalesLast9 = seq9.some((v) => v > 0);
+  // const hasSalesLast9 = seq9.some((v) => v > 0);
 
-  const isDeadStock = !hasSalesLast9;
+    const isDeadStock = f === 0;
+  // const isDeadStock = !hasSalesLast9;
   const isInactive = !hasSalesLast6 && f <= 2;
+  // const isInactive = !isDeadStock && cntNonZero === 0;
 
   // ====== Fast / Slow moving ======
   let stockMoving = null;
@@ -230,6 +205,7 @@ const seq9 = sales9.map(x => x.qty);
     branchCode: r.branchCode,
     skuNumber: r.skuNumber,
     productName: r.productName,
+    baseUnit: r.baseUnit, 
 
     averageDemand: avg,
     stdev6: stdevInt,
@@ -255,7 +231,7 @@ const seq9 = sales9.map(x => x.qty);
     accGroupId: r.accGroupId ?? null,
     accGroupName: r.accGroupName ?? null,
 
-    sales6,   // ไว้โชว์ใน popover HTML
+    sales6ForView ,   // ไว้โชว์ใน popover HTML
 
     stockMoving,
     isInactive,
