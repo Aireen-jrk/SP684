@@ -400,7 +400,7 @@ setTimeout(() => {
             <td class="px-3 py-2 border break-words">${r.productName ?? ""}</td>
             <td class="px-3 py-2 border break-words">${r.baseUnit  ?? "-"}</td>
             <td class="px-3 py-2 border text-center">${r.onHandQty ?? ""}</td>
-            <td class="px-3 py-2 border text-center">${r.cntNonZero ?? 0}</td>
+            <td class="px-3 py-2 border text-center">${r.backlog ?? 0}</td>
             <td class="px-3 py-2 border text-center">
               <button class="avg-pop underline text-blue-600" data-idx="${idx}">
                 ${r.averageDemand ?? 0}
